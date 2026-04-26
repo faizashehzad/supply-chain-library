@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ae683178-e08b-49ab-b6de-0535a0d484d8" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="3CZNT3kX1aD2SDHPRuqJKdNMdIm" />
+  <component name="ProjectViewState">
+    <option name="flattenPackages" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "SHELLCHECK.PATH": "/Users/zaad.aaziz/Library/Application Support/JetBrains/IntelliJIdea2025.3/plugins/Shell Script/shellcheck",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/zaad.aaziz/Downloads/supply-chain-library/SupplyChainLibrary"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ae683178-e08b-49ab-b6de-0535a0d484d8" name="Changes" comment="" />
+      <created>1776589136679</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1776589136679</updated>
+    </task>
+    <servers />
+  </component>
+</project>
