@@ -52,18 +52,26 @@ public class Warehouse {
     public void notifyObservers(Shipment s) {
         if (s == null) return;
         for (ShipmentObserver observer : observers) {
-            observer.onStatusUpdate(s);
+            observer.onStatusChange(s);
         }
     }
 
-    /**
-     * Returns the shipment at the given index, or null if out of range.
-     */
+    // Returns the shipment at the given index, or null if out of rangee
     public Shipment getShipment(int index) {
         if (index >= 0 && index < inventory.size()) {
             return inventory.get(index);
         }
         return null;
+    }
+
+    // Retrieves a Shipment from the warehouse inventory by its unique shipment ID.
+       public Shipment getShipmentById(int shipmentId) {
+        for (Shipment s : inventory) {
+            if (s.getShipmentId() == shipmentId) {
+                return s;
+            }
+        }
+        return null; // Shipment not found
     }
 
     public int getInventoryCount() {
