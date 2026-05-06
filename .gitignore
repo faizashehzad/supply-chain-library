@@ -11,4 +11,4 @@ out/
 .DS_Store
 
 # OS generated files
-Thumbs.db
+Thumbs.dbbin/
