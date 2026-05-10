@@ -11,8 +11,10 @@ import java.util.List;
 public class Order {
 
     private int orderId;
-    private List<Product> items;
+
     //TODO: Remove generics,  ArrayList needs to speicifed
+    private List<Product> items;
+
     public Order(int orderId) {
         this.orderId = orderId;
         this.items = new ArrayList<>();
@@ -67,16 +69,31 @@ public class Order {
     /**
      * Calculates the total weight of the order.
      * Demonstrates a simple logic that can be easily specified in JML.
-     /*TODo for later improve the for loop with a better code and then specify */
-    /*first implement this with simple for loop and specify it */
+     * TODO for later improve the for loop with a better code and then specify
+     * first implement this with simple for loop and specify it
+     * */
+
     public int getTotalWeight() {
-        return items.stream()
-                .mapToInt(Product::getWeight)
-                .sum();
+        int totalWeight = 0;
+        for (int i = 0; i < items.size(); i++) {
+            Product product = items.get(i);
+            if (product != null) {
+                totalWeight += product.getWeight();
+            }
+        }
+        return totalWeight;
     }
 
     @Override
     public String toString() {
         return "Order[id=" + orderId + ", quantity=" + items.size() + ", totalWeight=" + getTotalWeight() + "kg]";
     }
+
+
+    /**
+    public int getTotalWeight() {
+        return items.stream()
+                .mapToInt(Product::getWeight)
+                .sum();
+    } */
 }

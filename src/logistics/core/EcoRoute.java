@@ -5,11 +5,7 @@ import logistics.model.Order;
 import logistics.model.Product;
 import logistics.model.Location;
 
-/**
- * A route strategy that prioritizes economy.
- * Cost is calculated based on weight AND distance.
- * Formula: (Total Weight * 1) + (Distance in abstract units * 0.0005)
- */
+ // A route strategy that prioritizes economy.
 public class EcoRoute implements RouteStrategy {
 
     private final RouteNetwork routeNetwork;

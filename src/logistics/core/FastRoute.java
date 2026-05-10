@@ -5,11 +5,7 @@ import logistics.model.Order;
 import logistics.model.Product;
 import logistics.model.Location;
 
-/**
- * A route strategy that prioritizes speed.
- * Cost is calculated based on weight AND distance.
- * Formula: (Total Weight * 2) + (Distance in abstract units * 0.001)
- */
+ // A route strategy that prioritizes speed.
 public class FastRoute implements RouteStrategy {
 
     private final RouteNetwork routeNetwork;

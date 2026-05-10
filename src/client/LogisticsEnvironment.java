@@ -15,11 +15,11 @@ public class LogisticsEnvironment { // Class name changed from LogisticsScenario
     private LocationRegistry locationRegistry; // Central catalog for locations
     private RouteNetwork routeNetwork;         // Stores distances between locations
 
-    // Locations for our network
-    private final Location HUB_FRANKFURT = new Location("Frankfurt", "10001");
-    private final Location HUB_HAMBURG = new Location("Hamburg", "20002");
-    private final Location HUB_COLOGNE = new Location("Cologne", "30003");
-    private final Location HUB_BERLIN = new Location("Berlin", "40004");
+    // Locations for our network (these are invented for the demo)
+    private final Location HUB_FRANKFURT = new Location("Frankfurt", 10001); // Changed to int
+    private final Location HUB_HAMBURG = new Location("Hamburg", 20002);
+    private final Location HUB_COLOGNE = new Location("Cologne", 30003);
+    private final Location HUB_BERLIN = new Location("Berlin", 40004);
 
 
     public LogisticsEnvironment() { // Constructor name changed
@@ -40,15 +40,15 @@ public class LogisticsEnvironment { // Class name changed from LogisticsScenario
 
         // Initialize and populate RouteNetwork with long distances
         this.routeNetwork = new RouteNetwork();
-        routeNetwork.addDistance(HUB_FRANKFURT.getPostcode(), HUB_HAMBURG.getPostcode(), 584_000L); // ~584 km
-        routeNetwork.addDistance(HUB_HAMBURG.getPostcode(), HUB_COLOGNE.getPostcode(), 450_000L); // ~450 km
-        routeNetwork.addDistance(HUB_FRANKFURT.getPostcode(), HUB_COLOGNE.getPostcode(), 289_000L);// ~289 km
-        routeNetwork.addDistance(HUB_HAMBURG.getPostcode(), HUB_BERLIN.getPostcode(), 289_000L); // ~289 km
-        routeNetwork.addDistance(HUB_FRANKFURT.getPostcode(), HUB_BERLIN.getPostcode(), 550_000L); // ~550 km (via A9)
-        routeNetwork.addDistance(HUB_COLOGNE.getPostcode(), HUB_BERLIN.getPostcode(), 570_000L); // ~570 km (via A2)
+        routeNetwork.addDistance(HUB_FRANKFURT.getPostcode(), HUB_HAMBURG.getPostcode(), 584_000L); // Changed to int postcodes
+        routeNetwork.addDistance(HUB_HAMBURG.getPostcode(), HUB_COLOGNE.getPostcode(), 450_000L);
+        routeNetwork.addDistance(HUB_FRANKFURT.getPostcode(), HUB_COLOGNE.getPostcode(), 289_000L);
+        routeNetwork.addDistance(HUB_HAMBURG.getPostcode(), HUB_BERLIN.getPostcode(), 289_000L);
+        routeNetwork.addDistance(HUB_FRANKFURT.getPostcode(), HUB_BERLIN.getPostcode(), 550_000L);
+        routeNetwork.addDistance(HUB_COLOGNE.getPostcode(), HUB_BERLIN.getPostcode(), 570_000L);
     }
 
-    //This method is used to prepare shipments before processing them.
+    // Creates shipment with a single product between specified locations.
     public Shipment createSimpleShipment(int shipId, int orderId, int weight, Location origin, Location destination) {
         Product product = new Product(1, "Product", weight);
         Order order = new Order(orderId);
@@ -58,7 +58,6 @@ public class LogisticsEnvironment { // Class name changed from LogisticsScenario
 
 
      // Runs a process scenario for an existing shipment Object.
-
     public int runProcessScenario(Shipment shipment, boolean useFastRoute) {
         // 1. Select strategy
         RouteStrategy strategy;
