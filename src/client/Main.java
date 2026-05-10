@@ -7,7 +7,8 @@ import logistics.core.LocationRegistry; // Import LocationRegistry
 import java.util.List;
 import java.util.Scanner; // For potential future interactive input
 
- // Clean launcher for the Supply Chain Logistics Library.
+ // This class simulates an interactive Parcel Sortation Hub scenario.
+
 public class Main {
 
     public static void main(String[] args) {
@@ -22,15 +23,6 @@ public class Main {
         Location hubCologne = registry.getLocationByPostcode(30003);
         Location hubBerlin = registry.getLocationByPostcode(40004);
 
-<<<<<<< HEAD
-        // Scenario 2: Eco Shipping
-        System.out.println("--- Running Scenario: Eco Route (Weight 20) ---");
-        int cost2 = scenario.runProcessScenario(1002, 20, false);
-        System.out.println("Calculated Cost: " + cost2);
-        System.out.println("Observers notified: " + scenario.getAuditLogger().getLogCount());
-        System.out.println();
-=======
->>>>>>> 4c9cb5a (Route Network Location Registry with Lambdas)
 
         System.out.println("Welcome to the " + environment.getWarehouse().getName() + " Sortation Hub at " + hubFrankfurt.getName() + " (" + hubFrankfurt.getPostcode() + ")!\n");
 
@@ -66,7 +58,7 @@ public class Main {
         // --- 2. Process each parcel sequentially (simulating user choices) ---
         System.out.println("--- Processing Parcels for Dispatch ---");
         
-        // Process them in the order they were added for this demo
+        // We'll process them in the order they were added for this demo
         // In a real interactive scenario, the user would pick by ID
         processParcel(environment, parcel1, true);  // Parcel 1: Fast
         processParcel(environment, parcel2, false); // Parcel 2: Eco
@@ -88,7 +80,7 @@ public class Main {
     private static void processParcel(LogisticsEnvironment environment, Shipment shipment, boolean useFastRoute) { // Renamed scenario to environment
         System.out.println("\n--- Processing Shipment ID: " + shipment.getShipmentId() + " ---");
         
-        if (shipment == null) { /
+        if (shipment == null) { // Should not happen with direct object passing, but good for robustness
             System.out.println("Error: Shipment object is null.");
             return;
         }
