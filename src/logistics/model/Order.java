@@ -1,32 +1,37 @@
 package logistics.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Represents a customer request to ship one or more products.
- * Items are stored in a fixed-size private array.
- * quantity always reflects the number of items added.
+ * Uses a dynamic list to store products, allowing for flexible order sizes.
  */
 public class Order {
 
-    private static final int MAX_ITEMS = 20;
+    private int orderId;
 
-    private int       orderId;
-    private Product[] items;
-    private int       quantity;
+    //TODO: Remove generics,  ArrayList needs to speicifed
+    private List<Product> items;
 
     public Order(int orderId) {
-        this.orderId  = orderId;
-        this.items    = new Product[MAX_ITEMS];
-        this.quantity = 0;
+        this.orderId = orderId;
+        this.items = new ArrayList<>();
+    }
+
+    //@ ensures items.content.length == 0;
+    public boolean hasOrders() {
+        return !items.isEmpty();
     }
 
     /**
      * Adds a product to this order.
-     * Does nothing if the order is already full.
+     * Does nothing if the product is null.
      */
     public void addItem(Product p) {
-        if (p != null && quantity < MAX_ITEMS) {
-            items[quantity] = p;
-            quantity++;
+        if (p != null) {
+            items.add(p);
         }
     }
 
@@ -34,21 +39,61 @@ public class Order {
         return orderId;
     }
 
+    /**
+     * Returns the total number of items in the order.
+     */
     public int getQuantity() {
-        return quantity;
+        return items.size();
     }
 
     /**
      * Returns the product at position index, or null if index is out of range.
      */
     public Product getItem(int index) {
-        if (index >= 0 && index < quantity) {
-            return items[index];
+        if (index >= 0 && index < items.size()) {
+            return items.get(index);
         }
         return null;
     }
 
-    public String toString() {
-        return "Order[id=" + orderId + ", quantity=" + quantity + "]";
+    /**
+     * Returns an unmodifiable view of the products in this order.
+     * This follows good encapsulation practices by preventing external modification.
+     */
+
+   // TODO: Just Return the list itself Specification would be
+    public List<Product> getAllItems() {
+        return Collections.unmodifiableList(items);
     }
+
+    /**
+     * Calculates the total weight of the order.
+     * Demonstrates a simple logic that can be easily specified in JML.
+     * TODO for later improve the for loop with a better code and then specify
+     * first implement this with simple for loop and specify it
+     * */
+
+    public int getTotalWeight() {
+        int totalWeight = 0;
+        for (int i = 0; i < items.size(); i++) {
+            Product product = items.get(i);
+            if (product != null) {
+                totalWeight += product.getWeight();
+            }
+        }
+        return totalWeight;
+    }
+
+    @Override
+    public String toString() {
+        return "Order[id=" + orderId + ", quantity=" + items.size() + ", totalWeight=" + getTotalWeight() + "kg]";
+    }
+
+
+    /**
+    public int getTotalWeight() {
+        return items.stream()
+                .mapToInt(Product::getWeight)
+                .sum();
+    } */
 }

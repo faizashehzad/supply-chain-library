@@ -15,8 +15,8 @@ public class ShipmentProcessor {
     /**
      * Processes a shipment:
      * 1. Calculates the route cost using the private strategy
-     * 2. Updates shipment status to IN_TRANSIT
-     * 3. Notifies the warehouse observers
+     * 2. Updates shipment status to IN_TRANSIT using the Shipment's own method.
+     * 3. Notifies the warehouse observers.
      *
      * Does nothing if shipment or warehouse is null.
      */
@@ -25,20 +25,22 @@ public class ShipmentProcessor {
             return -1;
         }
         int routeCost = strategy.calculateRoute(s);
-        s.updateStatus(Shipment.IN_TRANSIT);
+        // Use the Shipment's own state transition method
+        s.markInTransit(); 
         w.notifyObservers(s);
         return routeCost;
     }
 
     /**
-     * Marks a shipment as delivered and notifies the warehouse.
+     * Marks a shipment as delivered using the Shipment's own method and notifies the warehouse.
      * Does nothing if shipment or warehouse is null.
      */
     public void completeShipment(Shipment s, Warehouse w) {
         if (s == null || w == null) {
             return;
         }
-        s.updateStatus(Shipment.DELIVERED);
+        // Use the Shipment's own state transition method
+        s.markDelivered();
         w.notifyObservers(s);
     }
 }
