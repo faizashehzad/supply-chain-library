@@ -10,17 +10,35 @@ import java.util.List;
  */
 public class Order {
 
-    private int orderId;
 
-    //TODO: Remove generics,  ArrayList needs to speicifed
-    private List<Product> items;
+    //@ public model instance \seq productsInOrder;
+    //@ represents productsInOrder = items.content;
 
+    /*@ private invariant orderId > 0; @*/
+    private /*@ spec_public @*/ int orderId;
+
+    //@ private invariant (\forall int i; 0 <= i < productsInOrder.length; \seq_get(productsInOrder, i) != null );
+    private /*@ spec_public @*/  List items;
+
+    /*@ private normal_behavior
+      @ requires orderId > 0;
+      @ assignable this.orderId, this.items;
+      @ ensures this.orderId == orderId;
+      @ ensures productsInOrder == \seq_empty;
+    */
     public Order(int orderId) {
         this.orderId = orderId;
         this.items = new ArrayList<>();
     }
 
-    //@ ensures items.content.length == 0;
+
+    // TODO: specify with model fields
+
+    /*@ public normal_behavior
+      @ assignable \strictly_nothing;
+      @ ensures \result != \seq_empty;
+    */
+
     public boolean hasOrders() {
         return !items.isEmpty();
     }
@@ -29,12 +47,23 @@ public class Order {
      * Adds a product to this order.
      * Does nothing if the product is null.
      */
+
+    /*@ public normal_behavior
+      @ requires p != null;
+      @ assignable items.content;
+      @ ensures productsInOrder == \seq_concat(\old(productsInOrder), \seq_singleton(p))
+    @*/
+
     public void addItem(Product p) {
         if (p != null) {
             items.add(p);
         }
     }
 
+    /*@ public normal_behavior
+      @ ensures \result == orderId;
+      @ assignable \strictly_nothing;
+    @*/
     public int getOrderId() {
         return orderId;
     }
@@ -42,6 +71,10 @@ public class Order {
     /**
      * Returns the total number of items in the order.
      */
+
+    /*@ public normal_behavior
+      @ ensures \result == productsInOrder.length;
+    @*/
     public int getQuantity() {
         return items.size();
     }
@@ -49,22 +82,78 @@ public class Order {
     /**
      * Returns the product at position index, or null if index is out of range.
      */
-    public Product getItem(int index) {
+
+    /*@ public normal_behavior
+      @  requires (0 <= index && index < productsInOrder.length);
+      @  ensures \result == \seq_get(productsInOrder, index);
+      @  assignable \strictly_nothing;
+      @ also
+      @ public normal_behavior
+      @  requires (index < 0 || index >= productsInOrder.length);
+      @  ensures \result == null;
+      @  assignable \strictly_nothing;
+      @ also
+      @ public normal_behavior
+      @  requires (0 <= index && index < productsInOrder.length) ||  (index < 0 || index >= productsInOrder.length);
+      @  ensures \old((0 <= index && index < productsInOrder.length)) ==> \result == \seq_get(productsInOrder, index);
+      @  ensures \old((index < 0 || index >= productsInOrder.length)) ==>  \result == null;
+      @  assignable \strictly_nothing;
+      @*/
+
+    public /*@ nullable @*/ Product getItem(int index) {
         if (index >= 0 && index < items.size()) {
             return items.get(index);
         }
         return null;
     }
-
+//-----------------------------------
     /**
      * Returns an unmodifiable view of the products in this order.
      * This follows good encapsulation practices by preventing external modification.
      */
 
    // TODO: Just Return the list itself Specification would be
+
+
+     /*@ public normal_behavior
+       @  assignable \strictly_nothing;
+       @  ensures \result != null;
+       @  ensures \result.size() == productsInOrder.length;
+       @  ensures (\forall int i; 0 <= i < productsInOrder.length; \result.get(i) == \seq_get(productsInOrder, i));
+       @  ensures \fresh(\result) == false
+      @*/
+
     public List<Product> getAllItems() {
         return Collections.unmodifiableList(items);
     }
+
+//------------------------------------------------------
+    /*@ public normal_behavior
+      @ assignable \strictly_nothing;
+      @ ensures \result == (productsInOrder.length == 0);
+    */
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+
+
+  /*
+  *  //using arrays
+     public Product[] getAllItems() {
+     Product[] list_all_items = new Product[items.size()];
+        for (int i = 0; i < items.size(); i++) {
+            list_all_items[i] = items.get(i);
+        }
+        return list_all_items;
+    }
+  * */
+
+
+
+
+
+
+
 
     /**
      * Calculates the total weight of the order.
@@ -73,6 +162,12 @@ public class Order {
      * first implement this with simple for loop and specify it
      * */
 
+    /*@ public normal_behavior
+    @   requires totalWeight == 0;
+    @   requires (\forall int i; 0 <= i < items.size(); items.get(i) != null && items.get(i).getWeight() >= 0);
+    @   requires product != null;
+    @   ensures \result == (\sum int i; 0 <= i && i < items.size(); items.get(i).getWeight());
+    */
     public int getTotalWeight() {
         int totalWeight = 0;
         for (int i = 0; i < items.size(); i++) {
