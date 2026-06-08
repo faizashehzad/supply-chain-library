@@ -3,9 +3,9 @@ package logistics.model;
  // Represents a physical location with a name and a numeric postcod
 public class Location {
 
-    /*@ public invariant name != null && name.length() > 0 @*/
+    /*@ public invariant name != null && name.length() > 0; @*/
     private /*@ spec_public @*/ final String name;
-    /*@ public invariant postcode > 0 @*/
+    /*@ public invariant postcode > 0; @*/
     private /*@ spec_public @*/ final int postcode; // Changed from String to int
 
     /*@ public normal_behavior
@@ -20,7 +20,7 @@ public class Location {
     }
 
 
-    /*@ public normal_behvaior
+    /*@ public normal_behavior
       @ ensures \result.equals(name);
      */
     public String getName() {
@@ -28,7 +28,7 @@ public class Location {
     }
 
 
-    /*@ public normal_behvaior
+    /*@ public normal_behavior
       @ ensures \result == postcode;
      */
     public int getPostcode() { // Getter updated to return int

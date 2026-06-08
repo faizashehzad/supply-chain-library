@@ -2,92 +2,48 @@
 
 // can i remove SequesnceCollection<E>
 // for the moment comment out supertypes like SequencedColl, Iterable, Collection
-public interface List {
+public interface List extends Collection {
     //public interface List extends SequencedCollection {
 
     // use ghost for now
 
 
     // if there are properties
-    /*@ public ghost instance \seq content; */ // imagine like a integer
 
-
-    /*@ public normal_behavior
-      @ ensures \result == content.length;
-      @ assignable \strictly_nothing;
-     */
-    int size();
 
 // ------------------
-    /*@ public normal_behavior
-      @ ensures \result == (content.length == 0);
-      @ assignable \strictly_nothing;
-     */
-    boolean isEmpty();
 //--------------------
 
 /*Added Index Out of Bound check with prof */
 
-    /*@ public normal_behavior
-      @ requires 0 <= var1 && var1 < content.length;
-      @ ensures \result == \seq_get(content, var1);
-      @ assignable \strictly_nothing;
-      @ also
-      @ public exceptional_behavior
-      @   requires var1 < 0 || var1 >= content.length;
-      @   assignable \nothing;
-      @   signals_only IndexOutOfBoundsException;
-      @   signals (IndexOutOfBoundsException e) true;
+    /* public normal_behavior
+       requires 0 <= var1 && var1 < content.length;
+       ensures \result == \seq_get(content, var1);
+       assignable \strictly_nothing;
+       also
+       public exceptional_behavior
+         requires var1 < 0 || var1 >= content.length;
+         assignable \nothing;
+         signals_only IndexOutOfBoundsException;
+         signals (IndexOutOfBoundsException e) true;
      */
 
    // add index out b exc
      get(int var1);
 
-    /*@ public normal_behavior
-     @ requires var1 != null;
-     @ ensures content == \seq_concat(\old(content), \seq_singleton(var1));
-     @ ensures \result == true;
-     @ assignable content;
-     @ also
-     @ public exceptional_behavior
-     @   requires var1 == null
-     @   signals_only NullPointerException;
-     @   signals (NullPointerException e) true;
-     @   assignable \nothing;
-     @*/
 
-    boolean add(/*@ nullable @*/ Object var1);
-
-    /*@ public normal_behavior
-      @ requires var1 != null;
-      @ ensures \result == (\exists int i; 0 <= i < content.length; \seq_get(content, i).equals(var1));
-      @ assignable \strictly_nothing;
-      @ also
-      @ public exceptional_behavior
-      @   requires var1 == null
-      @   signals_only NullPointerException;
-      @   signals (NullPointerException e) true;
-     */
-    boolean contains(Object var1);
-
-
-
-
-
-    Iterator<E> iterator();
+    Iterator iterator();
 
     boolean contains(Object var1);
 
     Object[] toArray();
 
-    <T> T[] toArray(T[] var1);
-
     boolean remove(Object var1);
 
-    boolean containsAll(Collection<?> var1);
+    boolean containsAll(Collection var1);
 
-    boolean addAll(Collection<? extends E> var1);
-
+    boolean addAll(Collection var1);
+/*
     boolean addAll(int var1, Collection<? extends E> var2);
 
     boolean removeAll(Collection<?> var1);
@@ -175,5 +131,5 @@ public interface List {
             return (E)this.remove(this.size() - 1);
         }
     }
-
+*/
 }

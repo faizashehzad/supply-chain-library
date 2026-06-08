@@ -11,7 +11,7 @@ import java.util.List;
 public class Order {
 
 
-    //@ public model instance \seq productsInOrder;
+    //@ public instance model \seq productsInOrder;
     //@ represents productsInOrder = items.content;
 
     /*@ private invariant orderId > 0; @*/
@@ -21,14 +21,14 @@ public class Order {
     private /*@ spec_public @*/  List items;
 
     /*@ private normal_behavior
-      @ requires orderId > 0;
-      @ assignable this.orderId, this.items;
-      @ ensures this.orderId == orderId;
-      @ ensures productsInOrder == \seq_empty;
+       requires orderId > 0;
+       assignable this.orderId, this.items;
+       ensures this.orderId == orderId;
+       ensures productsInOrder == \seq_empty;
     */
     public Order(int orderId) {
         this.orderId = orderId;
-        this.items = new ArrayList<>();
+        this.items = new ArrayList();
     }
 
 
@@ -38,7 +38,6 @@ public class Order {
       @ assignable \strictly_nothing;
       @ ensures \result != \seq_empty;
     */
-
     public boolean hasOrders() {
         return !items.isEmpty();
     }
@@ -51,9 +50,8 @@ public class Order {
     /*@ public normal_behavior
       @ requires p != null;
       @ assignable items.content;
-      @ ensures productsInOrder == \seq_concat(\old(productsInOrder), \seq_singleton(p))
+      @ ensures productsInOrder == \seq_concat(\old(productsInOrder), \seq_singleton(p));
     @*/
-
     public void addItem(Product p) {
         if (p != null) {
             items.add(p);
@@ -99,10 +97,9 @@ public class Order {
       @  ensures \old((index < 0 || index >= productsInOrder.length)) ==>  \result == null;
       @  assignable \strictly_nothing;
       @*/
-
     public /*@ nullable @*/ Product getItem(int index) {
         if (index >= 0 && index < items.size()) {
-            return items.get(index);
+            return (Product) items.get(index);
         }
         return null;
     }
@@ -120,10 +117,10 @@ public class Order {
        @  ensures \result != null;
        @  ensures \result.size() == productsInOrder.length;
        @  ensures (\forall int i; 0 <= i < productsInOrder.length; \result.get(i) == \seq_get(productsInOrder, i));
-       @  ensures \fresh(\result) == false
+       @  ensures \fresh(\result);
       @*/
 
-    public List<Product> getAllItems() {
+    public List getAllItems() {
         return Collections.unmodifiableList(items);
     }
 
@@ -171,7 +168,7 @@ public class Order {
     public int getTotalWeight() {
         int totalWeight = 0;
         for (int i = 0; i < items.size(); i++) {
-            Product product = items.get(i);
+            Product product = (Product) items.get(i);
             if (product != null) {
                 totalWeight += product.getWeight();
             }

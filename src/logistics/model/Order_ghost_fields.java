@@ -8,7 +8,7 @@ import java.util.List;
  * Represents a customer request to ship one or more products.
  * Uses a dynamic list to store products, allowing for flexible order sizes.
  */
-public class Order {
+public class Order_ghost_fields {
 
     //@ public ghost instance \seq orderItems;
 
@@ -26,9 +26,9 @@ public class Order {
       @ ensures this.orderId == orderId;
       @ ensures this.items == \seq_empty;
     */
-    public Order(int orderId) {
+    public Order_ghost_fields(int orderId) {
         this.orderId = orderId;
-        this.items = new ArrayList<>();
+        this.items = new ArrayList();
         /*@ set orderItems = \seq_empty; @*/
     }
 
@@ -100,7 +100,7 @@ public class Order {
     */
     public Product /*@ nullable @*/ getItem(int index) {
         if (index >= 0 && index < items.size()) {
-            return items.get(index);
+            return (Product) items.get(index);
         }
         return null;
     }
@@ -120,7 +120,7 @@ public class Order {
        @  ensures (\forall int i; 0 <= i < orderItems.length; \result.get(i) == \seq_get(orderItems, i));
        @  ensures \fresh(\result) == false;
       @*/
-    public List<Product> getAllItems() {
+    public List getAllItems() {
         return Collections.unmodifiableList(items);
     }
 
@@ -163,7 +163,7 @@ public class Order {
     public int getTotalWeight() {
         int totalWeight = 0;
         for (int i = 0; i < items.size(); i++) {
-            Product product = items.get(i);
+            Product product = (Product) items.get(i);
             if (product != null) {
                 totalWeight += product.getWeight();
             }

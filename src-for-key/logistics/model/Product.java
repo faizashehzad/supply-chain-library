@@ -43,7 +43,7 @@ public class Product {
         return name;
     }
 
-    /*@ public normal_behvaior
+    /*@ public normal_behavior
       @ ensures \result == weight;
      */
 
