@@ -1,8 +1,8 @@
-//package java.util;
+package java.util;
 
 // can i remove SequesnceCollection<E>
 // for the moment comment out supertypes like SequencedColl, Iterable, Collection
-public interface List extends Collection {
+public interface List extends java.util.Collection {
     //public interface List extends SequencedCollection {
 
     // use ghost for now
@@ -29,26 +29,26 @@ public interface List extends Collection {
      */
 
    // add index out b exc
-     get(int var1);
+    java.lang.Object get(int var1);
 
 
-    Iterator iterator();
+    java.util.Iterator iterator();
 
-    boolean contains(Object var1);
+    boolean contains(java.lang.Object var1);
 
-    Object[] toArray();
+    java.lang.Object[] toArray();
 
-    boolean remove(Object var1);
+    boolean remove(java.lang.Object var1);
 
-    boolean containsAll(Collection var1);
+    boolean containsAll(java.util.Collection var1);
 
-    boolean addAll(Collection var1);
+    boolean addAll(java.util.Collection var1);
 /*
-    boolean addAll(int var1, Collection<? extends E> var2);
+    boolean addAll(int var1, java.util.Collection<? extends E> var2);
 
-    boolean removeAll(Collection<?> var1);
+    boolean removeAll(java.util.Collection<?> var1);
 
-    boolean retainAll(Collection<?> var1);
+    boolean retainAll(java.util.Collection<?> var1);
 
     default void replaceAll(UnaryOperator<E> operator) {
         Objects.requireNonNull(operator);
@@ -61,11 +61,11 @@ public interface List extends Collection {
     }
 
     default void sort(Comparator<? super E> c) {
-        Object[] a = this.toArray();
+        java.lang.Object[] a = this.toArray();
         Arrays.sort(a, c);
         ListIterator<E> i = this.listIterator();
 
-        for(Object e : a) {
+        for(java.lang.Object e : a) {
             i.next();
             i.set(e);
         }
@@ -80,11 +80,11 @@ public interface List extends Collection {
     E remove(int var1);
 
 
-    boolean equals(Object var1);
+    boolean equals(java.lang.Object var1);
 
-    int indexOf(Object var1);
+    int indexOf(java.lang.Object var1);
 
-    int lastIndexOf(Object var1);
+    int lastIndexOf(java.lang.Object var1);
 
     ListIterator<E> listIterator();
 

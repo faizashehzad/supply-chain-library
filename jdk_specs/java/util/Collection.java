@@ -6,7 +6,8 @@ package java.util;
 public interface Collection extends java.lang.Iterable
 {
 
-   /*@ public instance ghost \seq content; */ // imagine like a integer
+    // imagine like a integer
+   /*@ public ghost instance \seq content; @*/
 
    /*@ public normal_behavior
      @ ensures \result == content.length;
@@ -22,17 +23,17 @@ public interface Collection extends java.lang.Iterable
 
 
  /*@ public normal_behavior
-     @ requires var1 != null;
-     @ ensures content == \seq_concat(\old(content), \seq_singleton(var1));
-     @ ensures \result == true;
-     @ assignable content;
-     @ also
-     @ public exceptional_behavior
-     @   requires var1 == null
-     @   signals_only NullPointerException;
-     @   signals (NullPointerException e) true;
-     @   assignable \nothing;
-     @*/
+   @   requires var1 != null;
+   @   ensures content == \seq_concat(\old(content), \seq_singleton(var1));
+   @   ensures \result == true;
+   @   assignable content;
+   @ also
+   @ public exceptional_behavior
+   @   requires var1 == null;
+   @   signals_only NullPointerException;
+   @   signals (NullPointerException e) true;
+   @   assignable \nothing;
+   @*/
    boolean add(/*@ nullable @*/ java.lang.Object var1);
 
 
@@ -49,11 +50,11 @@ public interface Collection extends java.lang.Iterable
 
    /*@ public normal_behavior
      @ requires var1 != null;
-     @ ensures \result == (\exists int i; 0 <= i < content.length; \seq_get(content, i).equals(var1));
+     @ ensures \result == (\exists int i; 0 <= i < content.length; ((java.lang.Object)\seq_get(content, i)).equals(var1));
      @ assignable \strictly_nothing;
      @ also
      @ public exceptional_behavior
-     @   requires var1 == null
+     @   requires var1 == null;
      @   signals_only NullPointerException;
      @   signals (NullPointerException e) true;
     */

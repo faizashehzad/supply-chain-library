@@ -13,7 +13,6 @@ public interface ListIterator extends java.util.Iterator
     /*@ public normal_behavior
       @ ensures \result == true <==> index < seq.length;
       @ assignable \strictly_nothing;
-      @ determines \result \by seq.length, index;
       @*/
     public boolean hasNext();
     
@@ -23,8 +22,6 @@ public interface ListIterator extends java.util.Iterator
       @ ensures index == \old(index) + 1;
       @ assignable index;
       @ signals_only java.lang.RuntimeException;
-      @ determines \result \by seq, index;
-      @ determines index \by \itself;
       @*/
     public /*@nullable@*/ Object next();
     

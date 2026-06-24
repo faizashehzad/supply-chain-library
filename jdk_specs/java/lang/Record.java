@@ -115,7 +115,6 @@ public abstract class Record {
      * @return  {@code true} if this record is equal to the
      *          argument; {@code false} otherwise.
      */
-    @Override
     public abstract boolean equals(Object obj);
 
     /**
@@ -141,7 +140,6 @@ public abstract class Record {
      *
      * @return  a hash code value for this record.
      */
-    @Override
     public abstract int hashCode();
 
     /**
@@ -172,6 +170,5 @@ public abstract class Record {
      *
      * @return  a string representation of the object.
      */
-    @Override
     public abstract String toString();
 }

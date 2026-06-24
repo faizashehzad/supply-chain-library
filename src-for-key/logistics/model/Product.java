@@ -30,6 +30,7 @@ public class Product {
 
     /*@ public normal_behavior
       @ ensures \result == id;
+      @ assignable \strictly_nothing;
      */
     public int getId() {
         return id;
@@ -37,6 +38,7 @@ public class Product {
 
     /*@ public normal_behavior
       @ ensures \result.equals(name);
+      @ assignable \strictly_nothing;
      */
 
     public String getName() {
@@ -45,6 +47,7 @@ public class Product {
 
     /*@ public normal_behavior
       @ ensures \result == weight;
+      @ assignable \strictly_nothing;
      */
 
     public int getWeight() {

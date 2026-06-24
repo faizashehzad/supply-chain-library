@@ -3,7 +3,7 @@ package java.util;
 public final class LinkedList implements java.util.List {
 	
 	/*@ public normal_behavior
-	  @ ensures seq == param0.seq;
+	  @ ensures content == param0.content;
       @*/
 	public /*@pure@*/ LinkedList(Collection param0);
 	

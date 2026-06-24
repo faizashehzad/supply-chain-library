@@ -1,7 +1,7 @@
 package logistics.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
+//import java.util.Collections;
 import java.util.List;
 
 /**
@@ -11,7 +11,7 @@ import java.util.List;
 public class Order {
 
 
-    //@ public instance model \seq productsInOrder;
+    //@ public model \seq productsInOrder;
     //@ represents productsInOrder = items.content;
 
     /*@ private invariant orderId > 0; @*/
@@ -72,6 +72,7 @@ public class Order {
 
     /*@ public normal_behavior
       @ ensures \result == productsInOrder.length;
+      @ assignable \strictly_nothing;
     @*/
     public int getQuantity() {
         return items.size();
@@ -121,7 +122,8 @@ public class Order {
       @*/
 
     public List getAllItems() {
-        return Collections.unmodifiableList(items);
+        return null;
+                //Collections.unmodifiableList(items);
     }
 
 //------------------------------------------------------
@@ -160,10 +162,8 @@ public class Order {
      * */
 
     /*@ public normal_behavior
-    @   requires totalWeight == 0;
-    @   requires (\forall int i; 0 <= i < items.size(); items.get(i) != null && items.get(i).getWeight() >= 0);
-    @   requires product != null;
-    @   ensures \result == (\sum int i; 0 <= i && i < items.size(); items.get(i).getWeight());
+    @   requires (\forall int i; 0 <= i < productsInOrder.length; ((Product)\seq_get(productsInOrder, i)).getWeight() >= 0);
+    @   ensures \result == (\sum int i; 0 <= i && i < productsInOrder.length; ((Product)\seq_get(productsInOrder, i)).getWeight());
     */
     public int getTotalWeight() {
         int totalWeight = 0;
@@ -176,7 +176,7 @@ public class Order {
         return totalWeight;
     }
 
-    @Override
+   //  @Override
     public String toString() {
         return "Order[id=" + orderId + ", quantity=" + items.size() + ", totalWeight=" + getTotalWeight() + "kg]";
     }

@@ -19,9 +19,12 @@ public class Location {
         this.postcode = postcode;
     }
 
+    //TODO; put in equals method which returns true if post code is same or the combination of postcode and name are equal
+     // TODO: Hashcode function method and equals method should satisfy their contract.
 
     /*@ public normal_behavior
       @ ensures \result.equals(name);
+      @ assignable \strictly_nothing;
      */
     public String getName() {
         return name;
@@ -30,12 +33,13 @@ public class Location {
 
     /*@ public normal_behavior
       @ ensures \result == postcode;
+      @ assignable \strictly_nothing;
      */
     public int getPostcode() { // Getter updated to return int
         return postcode;
     }
 
-    @Override
+   //  @Override
     public String toString() {
         return name + " (" + postcode + ")";
     }

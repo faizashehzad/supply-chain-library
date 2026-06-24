@@ -6,6 +6,8 @@ package java.util;
 public interface Set extends java.util.Collection
 {
 
+   //@ public instance model \seq seq;
+
    public int size();
    
    public boolean isEmpty();

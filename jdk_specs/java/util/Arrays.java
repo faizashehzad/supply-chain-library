@@ -21,7 +21,7 @@ public final class Arrays {
     /*@ public normal_behavior
       @ ensures \fresh(\result) && \fresh(\result.*);
       @ ensures \invariant_for(\result);
-      @ ensures (\forall \bigint i; 0 <= i && i < \result.seq.length; ((String)\result.seq[i]) != null);
+      @ ensures (\forall \bigint i; 0 <= i && i < \result.content.length; ((String)\result.content[i]) != null);
       @ assignable \nothing;
       @*/
     public static java.util.ArrayList asList(java.lang.String str);
@@ -29,7 +29,7 @@ public final class Arrays {
     /*@ public normal_behavior
       @ ensures \fresh(\result) && \fresh(\result.*);
       @ ensures \invariant_for(\result);
-      @ ensures (\forall \bigint i; 0 <= i && i < \result.seq.length; ((String)\result.seq[i]) != null);
+      @ ensures (\forall \bigint i; 0 <= i && i < \result.content.length; ((String)\result.content[i]) != null);
       @ assignable \nothing;
       @*/
     public static java.util.ArrayList asList(java.lang.String[] arr);
@@ -534,4 +534,7 @@ public final class Arrays {
       @ assignable a[fromIndex..toIndex - 1];
       @*/
     public static void sort(char[] a, int fromIndex, int toIndex);
+
+
+    public static int hashCode(java.lang.Object[] values);
 }
