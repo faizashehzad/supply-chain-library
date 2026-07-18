@@ -35,7 +35,7 @@ public class Warehouse {
 
    /*@ public normal_behavior
      @ requires name != null && name.length() > 0;
-     @ assignable this.name, this.inventory, this.observers;
+     @ assignable \nothing;
      @ ensures this.name == name;
      @ ensures this.shipments.length == 0;
      @ ensures this.registeredObservers.length == 0;
@@ -65,7 +65,7 @@ public class Warehouse {
 
      */
     //TODO: MAke the arg Nullable
-    public void addToInventory(Shipment s) {
+    public void addToInventory(/*@ nullable @*/ Shipment s) {
         if (s != null) {
             inventory.add(s);
         }
@@ -115,12 +115,11 @@ public class Warehouse {
        @ also
        @ public normal_behavior
        @ requires s != null;
-       @ assignable \strictly_nothing;
        @ ensures shipments == \old(shipments);
        @ ensures registeredObservers == \old(registeredObservers);
      */
 
-    public void notifyObservers(Shipment s) {
+    public void notifyObservers(/*@ nullable @*/ Shipment s) {
         if (s == null) return;
         for ( int i = 0; i < observers.size(); i++ ) {
             final ShipmentObserver obs = (ShipmentObserver) observers.get(i);

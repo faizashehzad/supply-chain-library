@@ -17,5 +17,15 @@ public interface RouteStrategy {
      * Calculates and returns a route cost for the given shipment.
      * The returned value must be >= 0.
      */
-    int calculateRoute(Shipment s);
+     /*@ public normal_behavior
+       @ requires s == null;
+       @ ensures \result == 0;
+       @
+       @ also
+       @
+       @ public normal_behavior
+       @ requires s != null;
+       @ ensures \result >= 0;
+      */
+    public /*@ pure @*/ int calculateRoute(/*@ nullable @*/ Shipment s);
 }

@@ -18,6 +18,7 @@ public class Product {
       @ requires id > 0;
       @ requires  name.length() > 0;
       @ requires weight > 0;
+      @ assignable \nothing;
       @ ensures this.id == id;
       @ ensures this.name.equals(name);
       @ ensures this.weight == weight;

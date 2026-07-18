@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 
 
      // All known Locations in the delivery network.
-    public class LocationRegistry {
+    public class LocationRegistryImp {
 
      // Maps postcode to Location object for quick lookup
     private final Map<Integer, Location> locationsByPostcode; // Changed key type to Integer
 
-    public LocationRegistry()
+    public LocationRegistryImp()
     {
         this.locationsByPostcode = new HashMap<>();
     }

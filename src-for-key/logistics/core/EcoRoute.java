@@ -2,23 +2,50 @@ package logistics.core;
 
 import logistics.model.Shipment;
 import logistics.model.Order;
-import logistics.model.Product;
 import logistics.model.Location;
 
  // A route strategy that prioritizes economy.
 public class EcoRoute implements RouteStrategy {
 
-    private final RouteNetwork routeNetwork;
+     /*@ public invariant routeNetwork != null; @*/
+    private /*@ spec_public @*/ final RouteNetwork routeNetwork;
 
-    public EcoRoute(RouteNetwork routeNetwork) {
+    /*@ public normal_behavior
+      @ requires routeNetwork != null;
+      @ assignable \nothing;
+      @ ensures this.routeNetwork == routeNetwork;
+      @
+      @ also
+      @
+      @ public exceptional_behavior
+      @ requires routeNetwork == null;
+      @ assignable \nothing;
+      @ signals_only IllegalArgumentException;
+      @ signals (IllegalArgumentException e) true;
+      @*/
+
+    public EcoRoute(/*@ nullable @*/ RouteNetwork routeNetwork) {
         if (routeNetwork == null) {
             throw new IllegalArgumentException("RouteNetwork cannot be null for EcoRoute strategy.");
         }
         this.routeNetwork = routeNetwork;
     }
+//TODO: At some point need to (get Distance if a query method then can be directly specified )
+    /*@ public normal_behavior
+      @ requires s == null;
+      @ assignable \strictly_nothing;
+      @ ensures \result == 0;
+      @
+      @ also
+      @
+      @ public normal_behavior
+      @ requires s != null;
+      @ assignable \strictly_nothing;
+      @ ensures \result >= 0;
+      @*/
 
     @Override
-    public int calculateRoute(Shipment s) {
+    public int calculateRoute(/*@ nullable @*/ Shipment s) {
         if (s == null) {
             return 0;
         }

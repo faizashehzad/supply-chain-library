@@ -2,14 +2,27 @@ package logistics.core;
 
 import logistics.model.Shipment;
 import logistics.model.Order;
-import logistics.model.Product;
 import logistics.model.Location;
 
  // A route strategy that prioritizes speed.
 public class FastRoute implements RouteStrategy {
 
-    private final RouteNetwork routeNetwork;
+     /*@ public invariant routeNetwork != null; @*/
+    private /*@ spec_public @*/ final RouteNetwork routeNetwork;
 
+     /*@ public normal_behavior
+      @ requires routeNetwork != null;
+      @ assignable \nothing;
+      @ ensures this.routeNetwork == routeNetwork;
+      @
+      @ also
+      @
+      @ public exceptional_behavior
+      @ requires routeNetwork == null;
+      @ assignable \nothing;
+      @ signals_only IllegalArgumentException;
+      @ signals (IllegalArgumentException e) true;
+      @*/
     public FastRoute(RouteNetwork routeNetwork) {
         if (routeNetwork == null) {
             throw new IllegalArgumentException("RouteNetwork cannot be null for FastRoute strategy.");
@@ -17,8 +30,20 @@ public class FastRoute implements RouteStrategy {
         this.routeNetwork = routeNetwork;
     }
 
+     /*@ public normal_behavior
+       @ requires s == null;
+       @ assignable \strictly_nothing;
+       @ ensures \result == 0;
+       @
+       @ also
+       @
+       @ public normal_behavior
+       @ requires s != null;
+       @ ensures \result > 0;
+       @*/
+
     @Override
-    public int calculateRoute(Shipment s) {
+    public /*@ pure @*/ int calculateRoute(/*@ nullable @*/ Shipment s) {
         if (s == null) {
             return 0;
         }

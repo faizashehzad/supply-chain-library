@@ -13,7 +13,7 @@ public class Shipment {
 
     /*@ public invariant shipmentId > 0; @*/
     /*@ public invariant status == PENDING || status == IN_TRANSIT || status == DELIVERED; @*/
-    /*@ public invariant origin != destination; @*/ //TODO: make it with equals
+    /*@ public invariant !origin.equlas(destination); @*/ //TODO: make it with equals ---addressed
 
     private /*@ spec_public @*/ int shipmentId;
     private /*@ spec_public @*/ int      status;
@@ -25,19 +25,27 @@ public class Shipment {
 
     //TODO: make it with equals requires origin != destination;
     /*@ public normal_behavior
-       @ requires shipmentId > 0;
-       @ requires origin != null && destination != null && order != null;
-       @ requires origin != destination;
-       @ assignable this.shipmentId, this.status, this.origin, this.destination, this.order;
-       @ ensures this.shipmentId == shipmentId;
-       @ ensures this.status == PENDING;
-       @ ensures this.origin == origin;
-       @ ensures this.destination == destination;
-       @ ensures this.order == order;
+      @ requires shipmentId > 0;
+      @ requires origin != null && destination != null && order != null;
+      @ requires !origin.equals(destination);
+      @ assignable \nothing;
+      @ ensures this.shipmentId == shipmentId;
+      @ ensures this.status == PENDING;
+      @ ensures this.origin == origin;
+      @ ensures this.destination == destination;
+      @ ensures this.order == order;
+      @
+      @ also
+      @
+      @ public exceptional_behavior
+      @ requires origin == null || destination == null || order == null;
+      @ assignable \nothing;
+      @ signals_only IllegalArgumentException;
+      @ signals (IllegalArgumentException e) true;
      */
 
     //TODO: Make the arguments nullable and then define the exceptional behavior
-    public Shipment(int shipmentId, Location origin, Location destination, Order order)
+    public Shipment(int shipmentId, /*@ nullable @*/ Location origin, /*@ nullable @*/ Location destination, /*@ nullable @*/ Order order)
     {
         if (origin == null || destination == null || order == null) {
             throw new IllegalArgumentException("Origin, Destination, and Order cannot be null.");
