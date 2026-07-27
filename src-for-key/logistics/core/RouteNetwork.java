@@ -13,15 +13,12 @@ public class RouteNetwork {
     private /* @ spec_public @ */ long[][] distanceMatrix;
 
     /*@
-     @ public invariant postcodes != null;
      @ public invariant postcodeCount >= 0 && postcodeCount <= postcodes.length;
-     @ public invariant distanceMatrix != null;
      @ public invariant postcodes.length == distanceMatrix.length;
      @ public invariant (\forall int i; 0 <= i && i < postcodes.length;
-     @ distanceMatrix[i] != null && distanceMatrix[i].length == postcodes.length);
-     @ public invariant (\forall int i; 0 <= i && i < postcodeCount;
-     @ (\forall int j; i < j && j < postcodeCount; postcodes[i] != postcodes[j]));
-     @*/
+     @                                             distanceMatrix[i].length == postcodes.length);
+     @ public invariant (\forall int i, j; 0 <= i &&  i < j && i < postcodeCount; postcodes[i] != postcodes[j]);
+     */
 
     // We start with a small initial capacity to demonstrate resizing easily
     private /* @ spec_public @ */ static final int INITIAL_CAPACITY = 4;
@@ -30,6 +27,9 @@ public class RouteNetwork {
       @ ensures postcodeCount == 0;
       @ ensures postcodes.length == INITIAL_CAPACITY;
       @ ensures \fresh(postcodes) && \fresh(distanceMatrix);
+      @ assignable \nothing;
+      @ ensures distanceMatrix.length == INITIAL_CAPACITY;
+      @ ensures (\forall int i; 0 <= i < distanceMatrix.length; distanceMatrix[i].length == INITIAL_CAPACITY);
       @*/
     public RouteNetwork() {
         this.postcodes = new int[INITIAL_CAPACITY];
@@ -40,8 +40,9 @@ public class RouteNetwork {
     /*@ private normal_behavior
       @ requires postcodeCount == postcodes.length;
       @ assignable postcodes, distanceMatrix;
-      @ ensures postcodes.length == \old(postcodes).length * 2;
-      @ ensures (\forall int i; 0 <= i && i < \old(postcodeCount); postcodes[i] == \old(postcodes)[i]);
+      @ ensures postcodes.length == \old(postcodes.length) * 2;
+      @ ensures (\forall int i; 0 <= i && i < \old(postcodeCount); postcodes[i] == \old(postcodes[i]));
+      @ // TODO specify distancematrix resize
       @ ensures \fresh(postcodes) && \fresh(distanceMatrix);
       @*/
     /** Dynamically doubles the capacity of both internal arrays. */
@@ -71,12 +72,13 @@ public class RouteNetwork {
     }
 
     /*@ private normal_behavior
-     @ assignable postcodeCount, postcodes, postcodes[*], distanceMatrix,
-     @ distanceMatrix[*], distanceMatrix[*][*];
+     @ assignable postcodeCount, postcodes;
      @ ensures 0 <= \result && \result < postcodeCount;
      @ ensures postcodes[\result] == postcode;
+     @ // TODO: to specify resize and non resize like we did in the LocationRegistry Class
      @*/
     private int getOrCreatePostcodeIndex(int postcode) {
+        // Todo split this method intwwo lokup and add and retrun index
         for (int i = 0; i < postcodeCount; i++) {
             if (postcodes[i] == postcode) {
                 return i;
@@ -96,10 +98,9 @@ public class RouteNetwork {
 
     /*@ private normal_behavior
      @ assignable \strictly_nothing;
-     @ ensures (\result == -1) <==> (\forall int i; 0 <= i && i < postcodeCount;
-     @ postcodes[i] != postcode);
-     @ ensures (\result != -1) ==> (0 <= \result && \result < postcodeCount &&
-     @ postcodes[\result] == postcode);*/
+     @ ensures (\result == -1) ==> (\forall int i; 0 <= i && i < postcodeCount; postcodes[i] != postcode);
+     @ ensures (\result != -1) ==> (0 <= \result && \result < postcodeCount && postcodes[\result] == postcode);
+     */
     private int getPostcodeIndex(int postcode) {
         for (int i = 0; i < postcodeCount; i++) {
             if (postcodes[i] == postcode) {
@@ -111,11 +112,13 @@ public class RouteNetwork {
 
     /*@ public normal_behavior
       @ requires distance >= 0;
-      @ assignable postcodeCount, postcodes, postcodes[*], distanceMatrix,distanceMatrix[*], distanceMatrix[*][*];
+      @ assignable postcodeCount, postcodes, distanceMatrix; // distanceMatrix[lookup(originPostcode)][*];
+      @ // TODo didvide the cases for resize and non-resize
       @ ensures (\exists int originIdx, destIdx;
-      @ 0 <= originIdx && originIdx < postcodeCount && 0 <= destIdx && destIdx < postcodeCount;
-      @ postcodes[originIdx] == originPostcode && postcodes[destIdx] == destPostcode && distanceMatrix[originIdx][destIdx] == distance);
-     */
+      @                                        0 <= originIdx < postcodeCount && 0 <= destIdx < postcodeCount;
+      @                                                                       postcodes[originIdx] == originPostcode && postcodes[destIdx] == destPostcode && distanceMatrix[originIdx][destIdx] == distance);
+      @ //TODO add two cases where originIdx changes and where it does not change
+      */
     public void addOneWayDistance(int originPostcode, int destPostcode, long distance) {
         int originIdx = getOrCreatePostcodeIndex(originPostcode);
         int destIdx = getOrCreatePostcodeIndex(destPostcode);
@@ -125,9 +128,9 @@ public class RouteNetwork {
 
     /*@ public normal_behavior
       @ requires distance >= 0;
-      @ assignable postcodeCount, postcodes, postcodes[*], distanceMatrix,distanceMatrix[*], distanceMatrix[*][*];
+      @ assignable postcodeCount, postcodes;
       @ ensures (\exists int idx1, idx2; 0 <= idx1 && idx1 < postcodeCount && 0 <= idx2 && idx2 < postcodeCount;
-      @ postcodes[idx1] == postcode1 && postcodes[idx2] == postcode2 && distanceMatrix[idx1][idx2] == distance);
+      @                                                                                            postcodes[idx1] == postcode1 && postcodes[idx2] == postcode2 && distanceMatrix[idx1][idx2] == distance);
      */
     public void addDistance(int postcode1, int postcode2, long distance) {
         if (distance < 0) {
@@ -151,9 +154,8 @@ public class RouteNetwork {
       @ requires true;
       @ assignable \strictly_nothing;
       @ ensures originPostcode == destPostcode ==> \result == 0L;
-      @ ensures (\exists int src, dst; postcodes[src] == originPostcode &&
-      postcodes[dst] == destPostcode) ==> \result == distanceMatrix[src][dst];
-      */
+      @ ensures (\exists int src, dst; postcodes[src] == originPostcode && postcodes[dst] == destPostcode) ? (\exists int src, dst; postcodes[src] == originPostcode && postcodes[dst] == destPostcode && \result == distanceMatrix[src][dst]): \result == 0L;*/
+
     public long getDistance(int originPostcode, int destPostcode) {
         if (originPostcode == destPostcode) {
             return 0L;

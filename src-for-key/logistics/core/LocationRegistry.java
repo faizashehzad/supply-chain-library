@@ -10,18 +10,18 @@ public class LocationRegistry {
       @ public instance invariant (\forall int i, j; 0 <= i && i < locationCount && 0 <= j && j < locationCount;
                             i != j ==> locations[i].getPostcode() != locations[j].getPostcode());
     @*/
-    // Flat array to store the Location objects
-    private /*@ spec_public @*/ Location[] locations;
+    // Flat array to store the Location objects: After the array initlaization since its reference type array its entries are null by defailt
+    private /*@ spec_public nullable @*/ Location[] locations;
     private /*@ spec_public @*/ int locationCount;
 
     // Small initial capacity to easily trigger and demonstrate resizing
     private /*@ spec_public @*/ static final int INITIAL_CAPACITY = 4;
 
     /*@ public normal_behavior
-      @ ensures locations != null;
       @ ensures locationCount == 0;
       @ ensures locations.length == INITIAL_CAPACITY;
       @ ensures \fresh(locations);
+      @ assignable \nothing;
       @*/
     public LocationRegistry() {
         this.locations = new Location[INITIAL_CAPACITY];
@@ -35,9 +35,9 @@ public class LocationRegistry {
      */
     /*@ public normal_behavior
       @ ensures locations.length == \old(locations.length * 2);
-      @ ensures locations != null;
-      @ ensures locationCount == \old(locationCount);
-      @ assignable locations[*];
+      @ assignable locations;
+      @ ensures(\forall int i; 0 <= i && i < \old(locations.length); locations[i] == \old(locations[i]));
+      @ ensures \fresh(locations);
       @ */
 
     private void resize() {
@@ -71,25 +71,34 @@ public class LocationRegistry {
     }
     /*@ public normal_behavior
       @ requires location == null;
-      @ ensures locationCount == \old(locationCount);
       @ assignable \strictly_nothing;
       @
       @ also
+      @
       @ public normal_behavior
-      @ requires location != null;
-      @ requires (\exists int i; 0 <= i && i < locationCount; locations[i].getPostcode() == location.getPostcode());
-      @ ensures locationCount == \old(locationCount);
+      @ requires (\exists int i; 0 <= i && i < locationCount; locations[i].getPostcode() == locations.getPostcode());
       @ assignable \strictly_nothing;
+      @
       @ also
+      @
       @ public normal_behavior
-      @ requires location != null;
       @ requires (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != location.getPostcode());
+      @ requires locationCount < locations.length;
       @ ensures locationCount == \old(locationCount) + 1;
       @ ensures locations[\old(locationCount)] == location;
-      @ assignable locations, locationCount, locations[*];
+      @ assignable locationCount, locations[locationCount];
+      @ also
+      @ public normal_behavior
+      @ requires (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != location.getPostcode());
+      @ requires locationCount >= locations.length;
+      @// TODO rest of the array
+      @ ensures \fresh(locations);
+      @ ensures locationCount == \old(locationCount) + 1;
+      @ ensures locations[\old(locationCount)] == location;
+      @ assignable locations, locationCount;
       @*/
 
-    public void addLocation(Location location) {
+    public void addLocation(/*@ nullable @*/Location location) {
         if (location == null) {
             return;
         }
@@ -111,7 +120,7 @@ public class LocationRegistry {
     @ ensures \result == null ==> (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != postcode);
     @ assignable \strictly_nothing;
     @*/
-    public Location getLocationByPostcode(int postcode) {
+    public /*@nullable */ Location getLocationByPostcode(int postcode) {
         int idx = getIndexByPostcode(postcode);
         if (idx != -1) {
             return locations[idx];
@@ -125,8 +134,7 @@ public class LocationRegistry {
      * This mimics the safety of "unmodifiableList" by returning a copy.
      */
     /*@ public normal_behavior
-      @ ensures \result != null;
-      @ assignable \strictly_nothing;
+      @ assignable \nothing;
       @ ensures \result.length == locationCount;
       @ ensures (\forall int i; 0 <= i && i < locationCount; \result[i] == locations[i]);
       @ ensures \fresh(\result);
@@ -140,6 +148,7 @@ public class LocationRegistry {
     }
      /*@ public normal_behavior
        @ ensures \result == locationCount;
+       @ assignable \strictly_nothing;
      */
     public int size() {
         return locationCount;

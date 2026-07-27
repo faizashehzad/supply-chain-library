@@ -13,7 +13,7 @@ public class Shipment {
 
     /*@ public invariant shipmentId > 0; @*/
     /*@ public invariant status == PENDING || status == IN_TRANSIT || status == DELIVERED; @*/
-    /*@ public invariant !origin.equlas(destination); @*/ //TODO: make it with equals ---addressed
+    /*@ public invariant !origin.equals(destination); @*/ //TODO: make it with equals ---addressed
 
     private /*@ spec_public @*/ int shipmentId;
     private /*@ spec_public @*/ int      status;
