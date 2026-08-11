@@ -10,7 +10,7 @@ public class LocationRegistry {
       @ public instance invariant (\forall int i, j; 0 <= i && i < locationCount && 0 <= j && j < locationCount;
                             i != j ==> locations[i].getPostcode() != locations[j].getPostcode());
     @*/
-    // Flat array to store the Location objects: After the array initlaization since its reference type array its entries are null by defailt
+    // Flat array to store the Location objects: After the array initlaization since its reference type is array its entries are null by default
     private /*@ spec_public nullable @*/ Location[] locations;
     private /*@ spec_public @*/ int locationCount;
 
@@ -69,6 +69,7 @@ public class LocationRegistry {
         }
         return -1;
     }
+    // TODO specify resize of the array case: Done --> last scenario
     /*@ public normal_behavior
       @ requires location == null;
       @ assignable \strictly_nothing;
@@ -76,7 +77,7 @@ public class LocationRegistry {
       @ also
       @
       @ public normal_behavior
-      @ requires (\exists int i; 0 <= i && i < locationCount; locations[i].getPostcode() == locations.getPostcode());
+      @ requires (\exists int i; 0 <= i && i < locationCount; locations[i].getPostcode() == location.getPostcode());
       @ assignable \strictly_nothing;
       @
       @ also
@@ -91,11 +92,12 @@ public class LocationRegistry {
       @ public normal_behavior
       @ requires (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != location.getPostcode());
       @ requires locationCount >= locations.length;
-      @// TODO rest of the array
+      @ ensures locations.length == \old(locations.length) * 2;
+      @ assignable locations, locationCount;
+      @ ensures(\forall int i; 0 <= i && i < \old(locations.length); locations[i] == \old(locations[i]));
       @ ensures \fresh(locations);
       @ ensures locationCount == \old(locationCount) + 1;
       @ ensures locations[\old(locationCount)] == location;
-      @ assignable locations, locationCount;
       @*/
 
     public void addLocation(/*@ nullable @*/Location location) {

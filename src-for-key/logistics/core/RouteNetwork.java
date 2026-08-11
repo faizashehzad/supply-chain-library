@@ -42,7 +42,9 @@ public class RouteNetwork {
       @ assignable postcodes, distanceMatrix;
       @ ensures postcodes.length == \old(postcodes.length) * 2;
       @ ensures (\forall int i; 0 <= i && i < \old(postcodeCount); postcodes[i] == \old(postcodes[i]));
-      @ // TODO specify distancematrix resize
+      @ // TODO specify distancematrix resize --> Done
+      @ ensures distanceMatrix.length == \old(distanceMatrix.length * 2);
+      @ ensures (\forall int i, j; 0 <= i < postcodeCount && 0 <= j < postcodeCount; distanceMatrix[i][j] == \old(distanceMatrix[i][j]));
       @ ensures \fresh(postcodes) && \fresh(distanceMatrix);
       @*/
     /** Dynamically doubles the capacity of both internal arrays. */
@@ -75,16 +77,41 @@ public class RouteNetwork {
      @ assignable postcodeCount, postcodes;
      @ ensures 0 <= \result && \result < postcodeCount;
      @ ensures postcodes[\result] == postcode;
-     @ // TODO: to specify resize and non resize like we did in the LocationRegistry Class
-     @*/
+     @ // TODO: to specify scenario with resize and non resize like we did in the LocationRegistry Class
+     @
+     @ also
+     @
+     @ public normal_behavior
+     @ requires (\forall int i; 0 <= i && i < postcodeCount; postcodes[i] != postcode);
+     @ requires postcodeCount < postcodes.length;
+     @ ensures postcodeCount == \old(postcodeCount) + 1;
+     @ assignable postcodeCount, postcodes[postcodeCount];
+     @ ensures postcodes[\old(postcodeCount)] == postcode;
+     @ ensures \result == \old(postcodeCount);
+     @
+     @
+     @ also
+     @
+     @ public normal_behavior
+     @ requires (\forall int i; 0 <= i && i < postcodeCount; postcodes[i] != postcode);
+     @ requires postcodeCount >= postcodes.length;
+     @ ensures postcodes.length == \old(postcodes.length) * 2;
+     @ assignable postcodes, postcodeCount, distanceMatrix;
+     @ ensures (\forall int i; 0 <= i && i < \old(postcodeCount); postcodes[i] == \old(postcodes[i]));
+     @ ensures postcodes[\old(postcodeCount)] == postcode;
+     @ ensures distanceMatrix.length == \old(distanceMatrix.length) * 2;
+     @ ensures (\forall int i, j; 0 <= i && i < \old(postcodeCount) && 0 <= j && j < \old(postcodeCount); distanceMatrix[i][j] == \old(distanceMatrix[i][j]));
+     @ ensures \fresh(distanceMatrix) && \fresh(postcodes);
+     @ ensures postcodeCount == \old(postcodeCount) + 1;
+     @ ensures \result == \old(postcodeCount);
+     @ */
     private int getOrCreatePostcodeIndex(int postcode) {
-        // Todo split this method intwwo lokup and add and retrun index
-        for (int i = 0; i < postcodeCount; i++) {
-            if (postcodes[i] == postcode) {
-                return i;
-            }
-        }
+        // Todo split this method in to two lookup and add and retrun index. lookup method already exists
+       int idx  = getPostcodeIndex(postcode);
 
+       if (idx >= 0) {
+           return idx;
+       }
         // If we are out of space, trigger the dynamic resizing
         if (postcodeCount >= postcodes.length) {
             resize();
@@ -109,16 +136,130 @@ public class RouteNetwork {
         }
         return -1;
     }
+// TODO: Replace query method
+    // case 1: originPostode and destPostcode exists in the array.
+    // case 2: originPostcode and destPostcode does not exist (new) and no array resize required.
+    // case 3: originPostcode and destPostcode does not exist (new) and resize is required.
+    // case 4: originPostcode exists in the array and destPostcode does not exist and no array resize required.
+    // case 5: originPostcode exists in the array and destPostcode does not exist in the array but resize is required.
+    // case 6: originPostcode does not exist in the array and destPostcode exists in the array and no array resize required.
+    // case 7: originPostcode does not exist in the array and destPostcode exists in the array but resize is required.
 
-    /*@ public normal_behavior
+
+    /*@ // CASE 1: originPostcode and destPostcode exists in the array.
+      @ public normal_behavior
       @ requires distance >= 0;
-      @ assignable postcodeCount, postcodes, distanceMatrix; // distanceMatrix[lookup(originPostcode)][*];
-      @ // TODo didvide the cases for resize and non-resize
-      @ ensures (\exists int originIdx, destIdx;
-      @                                        0 <= originIdx < postcodeCount && 0 <= destIdx < postcodeCount;
-      @                                                                       postcodes[originIdx] == originPostcode && postcodes[destIdx] == destPostcode && distanceMatrix[originIdx][destIdx] == distance);
-      @ //TODO add two cases where originIdx changes and where it does not change
-      */
+      @ requires (\exists int i; 0 <= i && i < postcodeCount; postcodes[i] == originPostcode) &&
+      @         (\exists int j; 0 <= j && j < postcodeCount; postcodes[j] == destPostcode);
+      @ requires postcodeCount <= postcodes.length;
+      @ assignable \everything;//distanceMatrix[*][*];
+      @ ensures distanceMatrix[getPostcodeIndex(originPostcode)][getPostcodeIndex(destPostcode)] == distance;
+      @ also
+      @ // CASE 2: originPostcode and destPostcode does not exist (new) and no array resize required.
+      @
+      @ public normal_behavior
+      @ requires distance >= 0;
+      @ requires originPostcode != destPostcode;
+      @ requires (!(\exists int i; 0 <= i && i < postcodeCount; postcodes[i] == originPostcode) &&
+      @         !(\exists int j; 0 <= j && j < postcodeCount; postcodes[j] == destPostcode));
+      @ requires postcodeCount + 2 <= postcodes.length;
+      @ assignable postcodeCount, postcodes[*]; //, distanceMatrix[*][*];
+      @ ensures postcodeCount == \old(postcodeCount) + 2;
+      @ ensures (\forall int k; 0 <= k < \old(postcodeCount); postcodes[k] == \old(postcodes[k]));
+      @ ensures postcodes[\old(postcodeCount)] == originPostcode;
+      @ ensures postcodes[\old(postcodeCount) + 1] == destPostcode;
+      @ ensures distanceMatrix[\old(postcodeCount)][\old(postcodeCount) + 1] == distance;
+      @
+      @ also
+      @
+      @ // CASE 3: originPostcode and destPostcode does not exist (new) and resize is required.
+      @
+      @ public normal_behavior
+      @ requires originPostcode != destPostcode;
+      @ requires distance >= 0;
+      @ requires (!(\exists int i; 0 <= i && i < postcodeCount; postcodes[i] == originPostcode) &&
+      @         !(\exists int j; 0 <= j && j < postcodeCount; postcodes[j] == destPostcode));
+      @ requires postcodeCount + 2 > postcodes.length;
+      @ assignable postcodeCount, postcodes, distanceMatrix;
+      @ ensures postcodes.length == \old(postcodes.length) * 2;
+      @ ensures distanceMatrix.length == \old(distanceMatrix.length) * 2;
+      @ ensures (\forall int i; 0 <= i && i < \old(postcodeCount); postcodes[i] == \old(postcodes[i]));
+      @ ensures (\forall int i, j; 0 <= i && i < \old(postcodeCount) && 0 <= j && j < \old(postcodeCount); distanceMatrix[i][j] == \old(distanceMatrix[i][j]));
+      @ ensures \fresh(postcodes) && \fresh(distanceMatrix);
+      @ ensures postcodeCount == \old(postcodeCount) + 2;
+      @ ensures postcodes[\old(postcodeCount)] == originPostcode && postcodes[\old(postcodeCount) + 1] == destPostcode;
+      @ ensures distanceMatrix[\old(postcodeCount)][\old(postcodeCount) + 1] == distance;
+      @
+      @ also
+      @
+      @ // CASE 4: originPostcode exists in the array and destPostcode does not exist (new) and no array resize required.
+      @
+      @
+      @
+      @ public normal_behavior
+      @ requires distance >= 0;
+      @ requires (\exists int i; 0 <= i && i < postcodeCount; postcodes[i] == originPostcode);
+      @ requires !(\exists int j; 0 <= j && j < postcodeCount; postcodes[j] == destPostcode);
+      @ requires postcodeCount + 1 <= postcodes.length;
+      @ assignable postcodeCount, postcodes[*]; //, distanceMatrix[*][*];
+      @ ensures postcodeCount == \old(postcodeCount) + 1;
+      @ ensures (\forall int k; 0 <= k < \old(postcodeCount); postcodes[k] == \old(postcodes[k]));
+      @ ensures postcodes[\old(postcodeCount)] == destPostcode;
+      @ ensures (\exists int originIdx; 0 <= originIdx < \old(postcodeCount) && \old(postcodes[originIdx]) == originPostcode; distanceMatrix[originIdx][\old(postcodeCount)] == distance);
+      @
+      @ also
+      @ // case 5: originPostcode exists in the array and destPostcode does not exist in the array but resize is required.
+      @
+      @ public normal_behavior
+      @ requires distance >= 0;
+      @ requires (\exists int i; 0 <= i && i < postcodeCount; postcodes[i] == originPostcode);
+      @ requires !(\exists int j; 0 <= j && j < postcodeCount; postcodes[j] == destPostcode);
+      @ requires postcodeCount + 1 > postcodes.length;
+      @ assignable postcodeCount, postcodes, distanceMatrix;
+      @ ensures postcodes.length == \old(postcodes.length) * 2;
+      @ ensures distanceMatrix.length == \old(distanceMatrix.length) * 2;
+      @ ensures (\forall int i; 0 <= i && i < \old(postcodeCount); postcodes[i] == \old(postcodes[i]));
+      @ ensures (\forall int i, j; 0 <= i && i < \old(postcodeCount) && 0 <= j && j < \old(postcodeCount); distanceMatrix[i][j] == \old(distanceMatrix[i][j]));
+      @ ensures \fresh(postcodes) && \fresh(distanceMatrix);
+      @ ensures postcodeCount == \old(postcodeCount) + 1;
+      @ ensures postcodes[\old(postcodeCount)] == destPostcode;
+      @ ensures (\exists int originIdx; 0 <= originIdx < \old(postcodeCount) && \old(postcodes[originIdx]) == originPostcode; distanceMatrix[originIdx][\old(postcodeCount)] == distance);
+      @
+      @ also
+      @
+      @ // case 6: originPostcode does not exist in the array and destPostcode exists in the array and no array resize required.
+      @
+      @ public normal_behavior
+      @ requires distance >= 0;
+      @ requires !(\exists int i; 0 <= i && i < postcodeCount; postcodes[i] == originPostcode);
+      @ requires (\exists int j; 0 <= j && j < postcodeCount; postcodes[j] == destPostcode);
+      @ requires postcodeCount + 1 <= postcodes.length;
+      @ assignable postcodeCount, postcodes[*];//, distanceMatrix[*][*];
+      @ ensures (\forall int k; 0 <= k < \old(postcodeCount); postcodes[k] == \old(postcodes[k]));
+      @ ensures postcodeCount == \old(postcodeCount) + 1;
+      @ ensures postcodes[\old(postcodeCount)] == originPostcode;
+      @ ensures (\exists int destIdx; 0 <= destIdx < \old(postcodeCount) && \old(postcodes[destIdx]) == destPostcode; distanceMatrix[\old(postcodeCount)][destIdx] == distance);
+      @
+      @ also
+      @
+      @ // case 7: originPostcode does not exist in the array and destPostcode exists in the array and array resize is required.
+      @
+      @ public normal_behavior
+      @ requires distance >= 0;
+      @ requires !(\exists int i; 0 <= i && i < postcodeCount; postcodes[i] == originPostcode);
+      @ requires (\exists int j; 0 <= j && j < postcodeCount; postcodes[j] == destPostcode);
+      @ requires postcodeCount + 1 > postcodes.length;
+      @ assignable postcodeCount, postcodes, distanceMatrix;
+      @ ensures postcodes.length == \old(postcodes.length) * 2;
+      @ ensures distanceMatrix.length == \old(distanceMatrix.length) * 2;
+      @ ensures (\forall int i; 0 <= i && i < \old(postcodeCount); postcodes[i] == \old(postcodes[i]));
+      @ ensures (\forall int i, j; 0 <= i && i < \old(postcodeCount) && 0 <= j && j < \old(postcodeCount); distanceMatrix[i][j] == \old(distanceMatrix[i][j]));
+      @ ensures \fresh(postcodes) && \fresh(distanceMatrix);
+      @ ensures postcodeCount == \old(postcodeCount) + 1;
+      @ ensures postcodes[\old(postcodeCount)] == originPostcode;
+      @ ensures (\exists int destIdx; 0 <= destIdx < \old(postcodeCount) && \old(postcodes[destIdx]) == destPostcode; distanceMatrix[\old(postcodeCount)][destIdx] == distance);
+      @
+      @*/
     public void addOneWayDistance(int originPostcode, int destPostcode, long distance) {
         int originIdx = getOrCreatePostcodeIndex(originPostcode);
         int destIdx = getOrCreatePostcodeIndex(destPostcode);
@@ -131,7 +272,7 @@ public class RouteNetwork {
       @ assignable postcodeCount, postcodes;
       @ ensures (\exists int idx1, idx2; 0 <= idx1 && idx1 < postcodeCount && 0 <= idx2 && idx2 < postcodeCount;
       @                                                                                            postcodes[idx1] == postcode1 && postcodes[idx2] == postcode2 && distanceMatrix[idx1][idx2] == distance);
-     */
+      */
     public void addDistance(int postcode1, int postcode2, long distance) {
         if (distance < 0) {
             throw new IllegalArgumentException("Distance must be non-negative.");
