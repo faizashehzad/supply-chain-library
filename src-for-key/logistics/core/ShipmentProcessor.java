@@ -34,14 +34,14 @@ public class ShipmentProcessor {
       @ also
       @
       @ public normal_behavior
-      @ requires s != null && w != null && s.status == Shipment.PENDING;
+      @ requires s != null && w != null && s.modelShipmentStatus == Shipment.PENDING;
       @ ensures \result >= 0;
       @ assignable \everything;
-      @ ensures s.status == Shipment.IN_TRANSIT;
+      @ ensures s.modelShipmentStatus == Shipment.IN_TRANSIT;
       @ also
       @
       @ public exceptional_behavior
-      @ requires s != null && w != null && s.status != Shipment.PENDING;
+      @ requires s != null && w != null && s.modelShipmentStatus != Shipment.PENDING;
       @ assignable \nothing;
       @ signals_only RuntimeException;
       @ signals (RuntimeException e) true;
@@ -69,14 +69,14 @@ public class ShipmentProcessor {
         @ also
         @
         @ public normal_behavior
-        @ requires s != null && w != null && s.status == Shipment.IN_TRANSIT;
-        @ assignable s.status;
-        @ ensures s.status == Shipment.DELIVERED;
+        @ requires s != null && w != null && s.modelShipmentStatus == Shipment.IN_TRANSIT;
+        @ assignable s.modelShipmentStatus;
+        @ ensures s.modelShipmentStatus == Shipment.DELIVERED;
         @
         @ also
         @
         @ public exceptional_behavior
-        @ requires s != null && w != null && s.status != Shipment.IN_TRANSIT;
+        @ requires s != null && w != null && s.modelShipmentStatus != Shipment.IN_TRANSIT;
         @ assignable \nothing;
         @ signals_only RuntimeException;
         @ signals (RuntimeException e) true;
