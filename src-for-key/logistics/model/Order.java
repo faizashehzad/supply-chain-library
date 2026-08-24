@@ -14,16 +14,19 @@ public class Order {
     //@ public model \seq productsInOrder;
     //@ represents productsInOrder = items.content;
 
-    /*@ private invariant orderId > 0; @*/
-    private /*@ spec_public @*/ int orderId;
+    //@ public model int modelOrderId;
+    //@ represents modelOrderId = orderId;
+
+    /*@ public invariant modelOrderId > 0; @*/
+    private int orderId;
 
     //@ private invariant (\forall int i; 0 <= i < productsInOrder.length; \seq_get(productsInOrder, i) != null );
-    private /*@ spec_public @*/  List items;
+    private List items;
 
-    /*@ private normal_behavior
+    /*@ public normal_behavior
        requires orderId > 0;
        assignable this.orderId, this.items;
-       ensures this.orderId == orderId;
+       ensures this.modelOrderId() == orderId;
        ensures productsInOrder == \seq_empty;
     */
     public Order(int orderId) {
@@ -49,7 +52,7 @@ public class Order {
 
     /*@ public normal_behavior
       @ requires p != null;
-      @ assignable items.content;
+      @ assignable productsInOrder;
       @ ensures productsInOrder == \seq_concat(\old(productsInOrder), \seq_singleton(p));
     @*/
     public void addItem(Product p) {
@@ -59,7 +62,7 @@ public class Order {
     }
 
     /*@ public normal_behavior
-      @ ensures \result == orderId;
+      @ ensures \result == getOrderId();
       @ assignable \strictly_nothing;
     @*/
     public int getOrderId() {

@@ -12,6 +12,7 @@ public class AlertService implements ShipmentObserver {
     private /*@ spec_public @*/ int      alertCount;
     private /*@ spec_public nullable @*/ Shipment lastAlertedShipment;
 
+// represents modLocs = alertCount, lastAlertCount;
 
     /*@ public normal_behavior
        @ assignable \nothing;

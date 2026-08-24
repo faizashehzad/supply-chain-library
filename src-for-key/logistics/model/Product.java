@@ -6,22 +6,33 @@ package logistics.model;
  */
 public class Product {
 
-    /*@ public invariant id > 0; @*/
-    /*@ public invariant name.length() > 0; @*/
-    /*@ public invariant weight > 0; @*/
+    /*@ public model int modelProductId;
+      @ represents modelProductId = id;
+      @ public invariant modelProductId > 0;
+      @*/
 
-    private /*@ spec_public @*/ int id;
-    private /*@ spec_public @*/ String name;
-    private /*@ spec_public @*/ int weight;  // weight in kilograms, must be > 0
+    private int id;
+
+    /*@ public model String modelProductName;
+      @ represents modelProductName = name;
+      @ public invariant modelProductName.length() > 0;
+      @*/
+    private String name;
+
+    /*@ public model int weight;
+      @ represents modelProductWeight = weight;
+      @ public invariant modelProductWeight > 0;
+      @*/
+    private int weight;  // weight in kilograms, must be > 0
 
     /*@ public normal_behavior
       @ requires id > 0;
       @ requires  name.length() > 0;
       @ requires weight > 0;
       @ assignable \nothing;
-      @ ensures this.id == id;
-      @ ensures this.name.equals(name);
-      @ ensures this.weight == weight;
+      @ ensures this.modelProductId == id;
+      @ ensures this.modelProductName.equals(name);
+      @ ensures this.modelProductWeight == weight;
      */
     public Product(int id, String name, int weight) {
         this.id     = id;
@@ -30,7 +41,7 @@ public class Product {
     }
 
     /*@ public normal_behavior
-      @ ensures \result == id;
+      @ ensures \result == modelProductId;
       @ assignable \strictly_nothing;
      */
     public int getId() {
@@ -38,7 +49,7 @@ public class Product {
     }
 
     /*@ public normal_behavior
-      @ ensures \result.equals(name);
+      @ ensures \result.equals(modelProductName);
       @ assignable \strictly_nothing;
      */
 
@@ -47,7 +58,7 @@ public class Product {
     }
 
     /*@ public normal_behavior
-      @ ensures \result == weight;
+      @ ensures \result == modelProductWeight;
       @ assignable \strictly_nothing;
      */
 

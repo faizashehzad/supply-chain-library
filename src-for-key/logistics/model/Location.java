@@ -3,17 +3,20 @@ package logistics.model;
  // Represents a physical location with a name and a numeric postcode
 public class Location {
 
-    /*@ public invariant name != null && name.length() > 0; @*/
-    private /*@ spec_public @*/ final String name;
-    /*@ public invariant postcode > 0; @*/
-    private /*@ spec_public @*/ final int postcode; // Changed from String to int
+
+     /*@ public invariant getName().length() > 0; @*/
+
+     /*@ private invariant name.length() > 0; @*/
+    private final String name;
+    /*@ public invariant modelPostcode > 0; @*/
+    private final int postcode; // Changed from String to int
 
     /*@ public normal_behavior
       @ requires name != null && name.length() > 0;
       @ requires postcode > 0;
       @ assignable \nothing;
-      @ ensures this.name.equals(name);
-      @ ensures this.postcode == postcode;
+      @ ensures this.modelName.equals(name);
+      @ ensures this.modelPostcode == postcode;
      */
     public Location(String name, int postcode) { // Constructor updated to accept int
         this.name = name;
@@ -24,7 +27,7 @@ public class Location {
      // TODO: Hashcode function method and equals method should satisfy their contract. ---addressed
     /*@ public normal_behavior
       @ assignable \strictly_nothing;
-      @ ensures \result == (obj instanceof Location && ((Location)obj).postcode == this.postcode);
+      @ ensures \result == (obj instanceof Location && ((Location)obj).getPostcode() == this.getPostcode());
       @*/
     public /*@ strictly_pure @*/ boolean equals(/*@ nullable @*/ Object obj) {
         if (obj instanceof Location) {
@@ -34,7 +37,7 @@ public class Location {
     }
 
      /*@ public normal_behavior
-       @ ensures \result == postcode;
+       @ ensures \result == modelPostcode;
        @ assignable \strictly_nothing;
        @*/
      public /*@ strictly_pure @*/ int hashCode() {
@@ -42,7 +45,7 @@ public class Location {
      }
 
     /*@ public normal_behavior
-      @ ensures \result.equals(name);
+      @ ensures \result.equals(modelName);
       @ assignable \strictly_nothing;
      */
     public /*@ strictly_pure @*/ String getName() {
@@ -51,7 +54,7 @@ public class Location {
 
 
     /*@ public normal_behavior
-      @ ensures \result == postcode;
+      @ ensures \result == modelPostcode;
       @ assignable \strictly_nothing;
      */
     public /*@ strictly_pure @*/ int getPostcode() { // Getter updated to return int

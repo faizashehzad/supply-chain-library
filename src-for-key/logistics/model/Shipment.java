@@ -11,15 +11,38 @@ public class Shipment {
     public static final int IN_TRANSIT = 1;
     public static final int DELIVERED  = 2;
 
-    /*@ public invariant shipmentId > 0; @*/
-    /*@ public invariant status == PENDING || status == IN_TRANSIT || status == DELIVERED; @*/
-    /*@ public invariant !origin.equals(destination); @*/ //TODO: make it with equals ---addressed
+    /*@ public model int modelShipmentId;
+      @ represents modelShipmentId = shipmentId;
+      @*/
 
-    private /*@ spec_public @*/ int shipmentId;
-    private /*@ spec_public @*/ int      status;
-    private /*@ spec_public @*/ Location origin;      // Now a Location object
-    private /*@ spec_public @*/ Location destination; // Now a Location object
-    private /*@ spec_public @*/ Order   order;
+    /*@ public invariant modelShipmentId > 0; */
+
+    /*@ public model int modelShipmentStatus;
+      @ represents modelShipmentStatus = status;
+      @*/
+
+    /*@ public invariant modelShipmentStatus == PENDING || modelShipmentStatus == IN_TRANSIT || modelShipmentStatus == DELIVERED;*/
+
+    /*@ public model Location modelLocationOrigin;
+      @ represents modelLocationOrigin = origin;
+      @*/
+
+    /*@ public model Location modelLocationDestination;
+      @ represents modelLocationDestination = destination;
+      @*/
+
+
+    /*@ public invariant !modelLocationOrigin.equals(modelLocationDestination); @*/ //TODO: make it with equals ---addressed
+
+    /*@ public model Order modelOrder;
+      @ represents modelOrder = order;
+      @*/
+
+    private int shipmentId;
+    private int      status;
+    private Location origin;      // Now a Location object
+    private Location destination; // Now a Location object
+    private Order   order;
 
 
 
@@ -29,11 +52,11 @@ public class Shipment {
       @ requires origin != null && destination != null && order != null;
       @ requires !origin.equals(destination);
       @ assignable \nothing;
-      @ ensures this.shipmentId == shipmentId;
-      @ ensures this.status == PENDING;
-      @ ensures this.origin == origin;
-      @ ensures this.destination == destination;
-      @ ensures this.order == order;
+      @ ensures this.modelShipmentId == shipmentId;
+      @ ensures this.modelShipmentStatus == PENDING;
+      @ ensures this.modelLocationOrigin == origin;
+      @ ensures this.modelLocationDestination == destination;
+      @ ensures this.modelOrder == order;
       @
       @ also
       @
@@ -59,7 +82,7 @@ public class Shipment {
 
     /*@ public normal_behavior
        @ assignable \strictly_nothing;
-       @ ensures \result == shipmentId;
+       @ ensures \result == modelShipmentId;
      */
     public int getShipmentId() {
         return shipmentId;
@@ -67,20 +90,20 @@ public class Shipment {
 
     /*@ public normal_behavior
        @ assignable \strictly_nothing;
-       @ ensures \result == status;
+       @ ensures \result == modelShipmentStatus;
      */
     public int getStatus() {
         return status;
     }
 
     /*@ public normal_behavior
-       @ requires this.status == PENDING;
-       @ assignable this.status;
-       @ ensures this.status == IN_TRANSIT;
+       @ requires this.modelShipmentStatus == PENDING;
+       @ assignable this.modelShipmentStatus;
+       @ ensures this.modelShipmentStatus == IN_TRANSIT;
        @
        @ also
        @ public exceptional_behavior
-       @ requires this.status != PENDING;
+       @ requires this.modelShipmentStatus != PENDING;
        @ assignable \nothing;
        @ signals_only RuntimeException;
        @ signals (RuntimeException e) e.getMessage().equals("Shipment must be PENDING to transition to IN_TRANSIT.");
@@ -93,13 +116,13 @@ public class Shipment {
     }
 
     /*@ public normal_behavior
-       @ requires this.status == IN_TRANSIT;
-       @ assignable this.status;
-       @ ensures this.status == DELIVERED;
+       @ requires this.modelShipmentStatus == IN_TRANSIT;
+       @ assignable this.modelShipmentStatus;
+       @ ensures this.modelShipmentStatus == DELIVERED;
        @
        @ also
        @ public exceptional_behavior
-       @ requires this.status != IN_TRANSIT;
+       @ requires this.modelShipmentStatus != IN_TRANSIT;
        @ assignable \nothing;
        @ signals_only RuntimeException;
        @ signals (RuntimeException e) e.getMessage().equals("Shipment must be IN_TRANSIT to transition to DELIVERED.");
@@ -118,11 +141,12 @@ public class Shipment {
 
     /*@ public normal_behavior
       @ requires newStatus == PENDING || newStatus == IN_TRANSIT || newStatus == DELIVERED;
-      @ assignable this.status;
-      @ ensures this.status == newStatus;
+      @ assignable this.modelShipmentStatus;
+      @ ensures this.modelShipmentStatus == newStatus;
       @ // The \old(this.status) can be any valid status here, this method doesn't restrict transitions.
       @
       @ also
+      @
       @ public exceptional_behavior
       @ requires !(newStatus == PENDING || newStatus == IN_TRANSIT || newStatus == DELIVERED);
       @ assignable \nothing;
@@ -139,7 +163,7 @@ public class Shipment {
 
     /*@ public normal_behavior
        @ assignable \strictly_nothing;
-       @ ensures \result == origin;
+       @ ensures \result == modelLocationOrigin;
      */
     public Location getOrigin() {
         return origin;
@@ -147,7 +171,7 @@ public class Shipment {
 
     /*@ public normal_behavior
        @ assignable \strictly_nothing;
-       @ ensures \result == destination;
+       @ ensures \result == modelLocationDestination;
      */
     public Location getDestination() {
         return destination;
@@ -155,7 +179,7 @@ public class Shipment {
 
     /*@ public normal_behavior
        @ assignable \strictly_nothing;
-       @ ensures \result == order;
+       @ ensures \result == modelLocationOrder;
      */
     public Order getOrder() {
         return order;
@@ -163,9 +187,9 @@ public class Shipment {
 
     /*@ public normal_behavior
       @ assignable \strictly_nothing;
-      @ ensures status == PENDING    ==> \result.equals("PENDING");
-      @ ensures status == IN_TRANSIT ==> \result.equals("IN_TRANSIT");
-      @ ensures status == DELIVERED  ==> \result.equals("DELIVERED");
+      @ ensures modelShipmentStatus == PENDING    ==> \result.equals("PENDING");
+      @ ensures modelShipmentStatus == IN_TRANSIT ==> \result.equals("IN_TRANSIT");
+      @ ensures modelShipmentStatus == DELIVERED  ==> \result.equals("DELIVERED");
     */
     public String statusLabel() {
         if (status == PENDING)    return "PENDING";

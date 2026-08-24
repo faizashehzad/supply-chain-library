@@ -17,27 +17,34 @@ import java.util.List;
 public class Warehouse {
 
 
-    /*@ public model \seq shipments; @*/
-    /*@ public represents shipments = inventory.content; @*/
-    /*@ public model \seq registeredObservers; @*/
-    /*@ public represents registeredObservers = observers.content; @*/
+    /*@ public model \seq shipmentsInventory;
+      @ public represents shipmentsInventory = inventory.content; @*/
 
-    //@ private invariant (\forall int i; 0 <= i < shipments.length; \seq_get(shipments, i) != null );
+    //@ private invariant (\forall int i; 0 <= i < shipmentsInventory.length; \seq_get(shipmentsInventory, i) != null );
+
     // private List<Shipment> inventory;
-    private /*@ spec_public @*/ List inventory;
+    private List inventory;
 
-    //@ private invariant (\forall int i; 0 <= i < registeredObservers.length; \seq_get(registeredObservers, i) != null );
-    //private List<ShipmentObserver> observers;
-    private /*@ spec_public @*/ List observers;
-    /*@ public invariant name != null && name.length() > 0; @*/
-    private /*@ spec_public @*/ String name;
+
+    /*@ public model \seq registeredObservers;
+      @ represents registeredObservers = observers.content; @*/
+    //@ public invariant (\forall int i; 0 <= i < registeredObservers.length; \seq_get(registeredObservers, i) != null );
+
+    //private List<ShipmentObserver> observers; //actual implementation
+    private List observers;
+
+
+    /*@ public model \seq WareHouseName;
+      @ public represents WareHouseName = name; @*/
+    /*@ public invariant WareHouseName != null && WareHouseName.length() > 0; @*/
+    private String name;
 
 
    /*@ public normal_behavior
      @ requires name != null && name.length() > 0;
      @ assignable \nothing;
-     @ ensures this.name == name;
-     @ ensures this.shipments.length == 0;
+     @ ensures this.WareHouseName == name;
+     @ ensures this.shipmentsInventory.length == 0;
      @ ensures this.registeredObservers.length == 0;
    */
 
@@ -53,15 +60,16 @@ public class Warehouse {
      */
     /*@ public normal_behavior
       @ requires s != null;
-      @ assignable inventory.content;
-      @ ensures shipments == \seq_concat(\old(shipments), \seq_singleton(s));
-      @ ensures shipments.length == \old(shipments.length) + 1;
+      @ assignable shipmentsInventory;
+      @ ensures shipmentsInventory == \seq_concat(\old(shipmentsInventory), \seq_singleton(s));
+      @ ensures shipmentsInventory.length == \old(shipmentsInventory.length) + 1;
       @
       @ also
+      @
       @ public normal_behavior
       @ requires s == null;
       @ assignable \strictly_nothing;
-      @ ensures shipments == \old(shipments);
+      @ ensures shipmentsInventory == \old(shipmentsInventory);
 
      */
     //TODO: MAke the arg Nullable
