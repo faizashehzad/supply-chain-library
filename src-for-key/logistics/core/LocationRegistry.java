@@ -18,7 +18,7 @@ public class LocationRegistry {
     private /*@ spec_public @*/ static final int INITIAL_CAPACITY = 4;
 
     /*@ public normal_behavior
-      @ ensures locationCount == 0;
+      @ ensures getLocationCount() == 0;
       @ ensures locations.length == INITIAL_CAPACITY;
       @ ensures \fresh(locations);
       @ assignable \nothing;
@@ -60,7 +60,7 @@ public class LocationRegistry {
       @ ensures (\result != -1) ==> (0 <= \result && \result < locationCount && locations[\result].getPostcode() == postcode);
       @ assignable \strictly_nothing;
       @*/
-    private int getIndexByPostcode(int postcode) {
+    private /*@ pure @*/ int getIndexByPostcode(int postcode) {
         for (int i = 0; i < locationCount; i++) {
             // Guarding against potential null elements in the array
             if (locations[i] != null && locations[i].getPostcode() == postcode) {
@@ -73,33 +73,36 @@ public class LocationRegistry {
     /*@ public normal_behavior
       @ requires location == null;
       @ assignable \strictly_nothing;
-      @
       @ also
       @
       @ public normal_behavior
-      @ requires (\exists int i; 0 <= i && i < locationCount; locations[i].getPostcode() == location.getPostcode());
+      @ requires location != null;
+      @ requires getLocationByPostcode(location.getPostcode()) != null;
       @ assignable \strictly_nothing;
       @
       @ also
       @
       @ public normal_behavior
-      @ requires (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != location.getPostcode());
-      @ requires locationCount < locations.length;
-      @ ensures locationCount == \old(locationCount) + 1;
-      @ ensures locations[\old(locationCount)] == location;
+      @ requires location != null;
+      @ requires getLocationByPostcode(location.getPostcode()) == null;
+      @ requires getLocationCount() < locations.length;
+      @ ensures getLocationCount() == \old(getLocationCount()) + 1;
+      @ ensures getLocationByPostcode(location.getPostcode()) == location;
       @ assignable locationCount, locations[locationCount];
+      @
       @ also
+      @
       @ public normal_behavior
-      @ requires (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != location.getPostcode());
-      @ requires locationCount >= locations.length;
+      @ requires location != null;
+      @ requires getLocationByPostcode(location.getPostcode()) == null;
+      @ requires getLocationCount() >= locations.length;
       @ ensures locations.length == \old(locations.length) * 2;
-      @ assignable locations, locationCount;
-      @ ensures(\forall int i; 0 <= i && i < \old(locations.length); locations[i] == \old(locations[i]));
+      @ ensures getLocationCount() == \old(getLocationCount()) + 1;
+      @ ensures getLocationByPostcode(location.getPostcode()) == location;
+      @ ensures(\forall int i; 0 <= i < \old(locations.length); locations[i] == \old(locations[i]));
       @ ensures \fresh(locations);
-      @ ensures locationCount == \old(locationCount) + 1;
-      @ ensures locations[\old(locationCount)] == location;
-      @*/
-
+      @ assignable locations, locationCount;
+     */
     public void addLocation(/*@ nullable @*/Location location) {
         if (location == null) {
             return;
@@ -122,7 +125,7 @@ public class LocationRegistry {
     @ ensures \result == null ==> (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != postcode);
     @ assignable \strictly_nothing;
     @*/
-    public /*@nullable */ Location getLocationByPostcode(int postcode) {
+    public /*@ nullable pure @*/ Location getLocationByPostcode(int postcode) {
         int idx = getIndexByPostcode(postcode);
         if (idx != -1) {
             return locations[idx];
@@ -141,7 +144,7 @@ public class LocationRegistry {
       @ ensures (\forall int i; 0 <= i && i < locationCount; \result[i] == locations[i]);
       @ ensures \fresh(\result);
      */
-    public Location[] getAllLocations() {
+    public /*@ pure @*/ Location[] getAllLocations() {
         Location[] copy = new Location[locationCount];
         for (int i = 0; i < locationCount; i++) {
             copy[i] = locations[i];
@@ -152,7 +155,7 @@ public class LocationRegistry {
        @ ensures \result == locationCount;
        @ assignable \strictly_nothing;
      */
-    public int size() {
+    public /*@ pure @*/ int getLocationCount() {
         return locationCount;
     }
 }

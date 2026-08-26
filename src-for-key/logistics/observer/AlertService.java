@@ -8,15 +8,15 @@ import logistics.model.Shipment;
  */
 public class AlertService implements ShipmentObserver {
 
-    /*@ public invariant alertCount >= 0; @*/
-    private /*@ spec_public @*/ int      alertCount;
-    private /*@ spec_public nullable @*/ Shipment lastAlertedShipment;
+    /*@ private invariant alertCount >= 0; @*/
+    private  int      alertCount;
+    private Shipment lastAlertedShipment;
 
 
     /*@ public normal_behavior
        @ assignable \nothing;
-       @ ensures this.alertCount == 0;
-       @ ensures this.lastAlertedShipment == null;
+       @ ensures this.getAlertCount() == 0;
+       @ ensures this.getLastAlertedShipment() == null;
      */
     public AlertService() {
         this.alertCount = 0;
@@ -25,9 +25,10 @@ public class AlertService implements ShipmentObserver {
 
     /*@ public normal_behavior
         @ assignable alertCount, lastAlertedShipment;
-        @ ensures s == null ==> alertCount == \old(alertCount) && lastAlertedShipment == \old(lastAlertedShipment);
-        @ ensures s != null ==> alertCount == \old(alertCount) + 1 && lastAlertedShipment == s;
+        @ ensures s == null ==> alertCount == \old(getAlertCount()) && lastAlertedShipment == \old(getLastAlertedShipment());
+        @ ensures s != null ==> alertCount == \old(getAlertCount()) + 1 && lastAlertedShipment == s;
      */
+
 
     /*@ public normal_behavior
       @ requires s == null;
@@ -37,7 +38,7 @@ public class AlertService implements ShipmentObserver {
       @ public normal_behavior
       @ requires s != null;
       @ assignable alertCount, lastAlertedShipment;
-      @ ensures alertCount == \old(alertCount) + 1;
+      @ ensures alertCount == \old(getAlertCount()) + 1;
       @ ensures lastAlertedShipment == s;
    */
 
@@ -55,14 +56,14 @@ public class AlertService implements ShipmentObserver {
         @ assignable \strictly_nothing;
         @ ensures \result == alertCount;
      */
-    public int getAlertCount() {
+    public /*@ pure @*/ int getAlertCount() {
         return alertCount;
     }
     /*@ public normal_behavior
       @ assignable \strictly_nothing;
       @ ensures \result == lastAlertedShipment;
      */
-    public Shipment getLastAlertedShipment() {
+    public /*@ pure @*/ Shipment getLastAlertedShipment() {
         return lastAlertedShipment;
     }
 }

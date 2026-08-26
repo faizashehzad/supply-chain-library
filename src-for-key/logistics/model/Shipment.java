@@ -11,15 +11,15 @@ public class Shipment {
     public static final int IN_TRANSIT = 1;
     public static final int DELIVERED  = 2;
 
-    /*@ public invariant shipmentId > 0; @*/
-    /*@ public invariant status == PENDING || status == IN_TRANSIT || status == DELIVERED; @*/
-    /*@ public invariant !origin.equals(destination); @*/ //TODO: make it with equals ---addressed
+    /*@ private invariant shipmentId > 0; @*/
+    /*@ private invariant status == PENDING || status == IN_TRANSIT || status == DELIVERED; @*/
+    /*@ private invariant (origin != null && destination != null) ==> !origin.equals(destination); @*/ //TODO: make it with equals ---addressed
 
-    private /*@ spec_public @*/ int shipmentId;
+    private int shipmentId;
     private /*@ spec_public @*/ int      status;
-    private /*@ spec_public @*/ Location origin;      // Now a Location object
-    private /*@ spec_public @*/ Location destination; // Now a Location object
-    private /*@ spec_public @*/ Order   order;
+    private Location origin;      // Now a Location object
+    private Location destination; // Now a Location object
+    private Order   order;
 
 
 
@@ -29,11 +29,11 @@ public class Shipment {
       @ requires origin != null && destination != null && order != null;
       @ requires !origin.equals(destination);
       @ assignable \nothing;
-      @ ensures this.shipmentId == shipmentId;
+      @ ensures this.getShipmentId() == shipmentId;
       @ ensures this.status == PENDING;
-      @ ensures this.origin == origin;
-      @ ensures this.destination == destination;
-      @ ensures this.order == order;
+      @ ensures this.getorigin().equals(origin);
+      @ ensures this.getdestination().equals(destination);
+      @ ensures this.getOrder() == order;
       @
       @ also
       @
@@ -61,7 +61,7 @@ public class Shipment {
        @ assignable \strictly_nothing;
        @ ensures \result == shipmentId;
      */
-    public int getShipmentId() {
+    public /*@ pure @*/ int getShipmentId() {
         return shipmentId;
     }
 
@@ -69,7 +69,7 @@ public class Shipment {
        @ assignable \strictly_nothing;
        @ ensures \result == status;
      */
-    public int getStatus() {
+    public /*@ pure @*/ int getStatus() {
         return status;
     }
 
@@ -79,6 +79,7 @@ public class Shipment {
        @ ensures this.status == IN_TRANSIT;
        @
        @ also
+       @
        @ public exceptional_behavior
        @ requires this.status != PENDING;
        @ assignable \nothing;
@@ -141,7 +142,7 @@ public class Shipment {
        @ assignable \strictly_nothing;
        @ ensures \result == origin;
      */
-    public Location getOrigin() {
+    public /*@ pure @*/ Location getOrigin() {
         return origin;
     }
 
@@ -149,7 +150,7 @@ public class Shipment {
        @ assignable \strictly_nothing;
        @ ensures \result == destination;
      */
-    public Location getDestination() {
+    public /*@ pure @*/ Location getDestination() {
         return destination;
     }
 
@@ -157,7 +158,7 @@ public class Shipment {
        @ assignable \strictly_nothing;
        @ ensures \result == order;
      */
-    public Order getOrder() {
+    public /*@ pure @*/ Order getOrder() {
         return order;
     }
 

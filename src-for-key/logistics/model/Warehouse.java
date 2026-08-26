@@ -17,27 +17,27 @@ import java.util.List;
 public class Warehouse {
 
 
-    /*@ public model \seq shipments; @*/
-    /*@ public represents shipments = inventory.content; @*/
+    /*@ public model \seq shipments_inventory; @*/
+    /*@ public represents shipments_inventory = inventory.content; @*/
     /*@ public model \seq registeredObservers; @*/
     /*@ public represents registeredObservers = observers.content; @*/
 
-    //@ private invariant (\forall int i; 0 <= i < shipments.length; \seq_get(shipments, i) != null );
+    //@ private invariant (\forall int i; 0 <= i < shipments_inventory.length; \seq_get(shipments_inventory, i) != null );
     // private List<Shipment> inventory;
     private /*@ spec_public @*/ List inventory;
 
     //@ private invariant (\forall int i; 0 <= i < registeredObservers.length; \seq_get(registeredObservers, i) != null );
     //private List<ShipmentObserver> observers;
     private /*@ spec_public @*/ List observers;
-    /*@ public invariant name != null && name.length() > 0; @*/
-    private /*@ spec_public @*/ String name;
+    /*@ private invariant name != null && name.length() > 0; @*/
+    private String name;
 
 
    /*@ public normal_behavior
      @ requires name != null && name.length() > 0;
      @ assignable \nothing;
-     @ ensures this.name == name;
-     @ ensures this.shipments.length == 0;
+     @ ensures this.getname().equals(name);
+     @ ensures this.shipments_inventory.length == 0;
      @ ensures this.registeredObservers.length == 0;
    */
 
@@ -54,14 +54,14 @@ public class Warehouse {
     /*@ public normal_behavior
       @ requires s != null;
       @ assignable inventory.content;
-      @ ensures shipments == \seq_concat(\old(shipments), \seq_singleton(s));
-      @ ensures shipments.length == \old(shipments.length) + 1;
+      @ ensures shipments_inventory == \seq_concat(\old(shipments_inventory), \seq_singleton(s));
+      @ ensures shipments_inventory.length == \old(shipments_inventory.length) + 1;
       @
       @ also
       @ public normal_behavior
       @ requires s == null;
       @ assignable \strictly_nothing;
-      @ ensures shipments == \old(shipments);
+      @ ensures shipments_inventory == \old(shipments_inventory);
 
      */
     //TODO: MAke the arg Nullable
@@ -109,13 +109,13 @@ public class Warehouse {
     /*@ public normal_behavior
        @ requires s == null;
        @ assignable \strictly_nothing;
-       @ ensures shipments == \old(shipments);
+       @ ensures shipments_inventory == \old(shipments_inventory);
        @ ensures registeredObservers == \old(registeredObservers);
        @
        @ also
        @ public normal_behavior
        @ requires s != null;
-       @ ensures shipments == \old(shipments);
+       @ ensures shipments_inventory == \old(shipments_inventory);
        @ ensures registeredObservers == \old(registeredObservers);
      */
 
@@ -130,8 +130,8 @@ public class Warehouse {
 
      /*@ public normal_behavior
        @ assignable \strictly_nothing;
-       @ ensures (0 <= index && index < shipments.length) ==> (\result != null && \result == \seq_get(shipments, index));
-       @ ensures (index < 0 || index >= shipments.length) ==> (\result == null);
+       @ ensures (0 <= index && index < shipments_inventory.length) ==> (\result != null && \result == \seq_get(shipments_inventory, index));
+       @ ensures (index < 0 || index >= shipments_inventory.length) ==> (\result == null);
      */
 
     // Returns the shipment at the given index, or null if out of rangee
@@ -144,11 +144,11 @@ public class Warehouse {
 
      /*@ public normal_behavior
        @ assignable \strictly_nothing;
-       @ ensures (\exists int i; 0 <= i < shipments.length; ((Shipment)\seq_get(shipments, i)).getShipmentId() == shipmentId)
-       @           ==>  (\exists int i; 0 <= i < shipments.length;
-       @                            ((Shipment)\seq_get(shipments, i)).getShipmentId() == shipmentId
-       @                            && \result == \seq_get(shipments, i));
-       @ ensures (\forall int i; 0 <= i < shipments.length; ((Shipment)\seq_get(shipments, i)).getShipmentId() != shipmentId)
+       @ ensures (\exists int i; 0 <= i < shipments_inventory.length; ((Shipment)\seq_get(shipments_inventory, i)).getShipmentId() == shipmentId)
+       @           ==>  (\exists int i; 0 <= i < shipments_inventory.length;
+       @                            ((Shipment)\seq_get(shipments_inventory, i)).getShipmentId() == shipmentId
+       @                            && \result == \seq_get(shipments_inventory, i));
+       @ ensures (\forall int i; 0 <= i < shipments_inventory.length; ((Shipment)\seq_get(shipments_inventory, i)).getShipmentId() != shipmentId)
        @           ==> (\result == null);
      */
 
@@ -165,7 +165,7 @@ public class Warehouse {
 
     /*@ public normal_behavior
       @ assignable \strictly_nothing;
-      @ ensures \result == shipments.length;
+      @ ensures \result == shipments_inventory.length;
      */
     public int getInventoryCount() {
         return inventory.size();
@@ -178,13 +178,16 @@ public class Warehouse {
     public int getObserverCount() {
         return observers.size();
     }
-
-    public String getName() {
+    /*@ public normal_behavior
+        @ assignable \strictly_nothing;
+        @ ensures \result == name;
+       */
+    public /*@ pure @*/ String getName() {
         return name;
     }
 
     @Override
     public String toString() {
-        return "Warehouse[name=" + name + ", shipments=" + inventory.size() + "]";
+        return "Warehouse[name=" + name + ", shipments_inventory=" + inventory.size() + "]";
     }
 }

@@ -3,17 +3,17 @@ package logistics.model;
  // Represents a physical location with a name and a numeric postcode
 public class Location {
 
-    /*@ public invariant name != null && name.length() > 0; @*/
-    private /*@ spec_public @*/ final String name;
-    /*@ public invariant postcode > 0; @*/
-    private /*@ spec_public @*/ final int postcode; // Changed from String to int
+    /*@ private invariant name != null && name.length() > 0; @*/
+    private final String name;
+    /*@ private invariant postcode > 0; @*/
+    private final int postcode; // Changed from String to int
 
     /*@ public normal_behavior
       @ requires name != null && name.length() > 0;
       @ requires postcode > 0;
       @ assignable \nothing;
-      @ ensures this.name.equals(name);
-      @ ensures this.postcode == postcode;
+      @ ensures this.getName().equals(name);
+      @ ensures this.getPostcode() == postcode;
      */
     public Location(String name, int postcode) { // Constructor updated to accept int
         this.name = name;
