@@ -52,7 +52,7 @@ public class Order {
       @ assignable items.content;
       @ ensures productsInOrder == \seq_concat(\old(productsInOrder), \seq_singleton(p));
     @*/
-    public void addItem(Product p) {
+    public void addItem(/*@ nullable@*/ Product p) {
         if (p != null) {
             items.add(p);
         }

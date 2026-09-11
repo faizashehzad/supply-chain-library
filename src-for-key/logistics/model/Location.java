@@ -22,10 +22,13 @@ public class Location {
 
       //TODO; put in equals method which returns true if post code is same or the combination of postcode and name are equal
      // TODO: Hashcode function method and equals method should satisfy their contract. ---addressed
-    /*@ public normal_behavior
+    /*@ private normal_behavior
       @ assignable \strictly_nothing;
-      @ ensures \result == (obj instanceof Location && ((Location)obj).postcode == this.postcode);
+      @ ensures \result == (obj instanceof Location && ((Location)obj).postcode == this.postcode); //usequery method
+      @ also
+      @ public normal_behavior ....
       @*/
+
     public /*@ strictly_pure @*/ boolean equals(/*@ nullable @*/ Object obj) {
         if (obj instanceof Location) {
             return this.postcode == ((Location) obj).postcode;

@@ -45,6 +45,7 @@ public class RouteNetwork {
       @ ensures (\forall int i; 0 <= i && i < \old(postcodeCount); postcodes[i] == \old(postcodes[i]));
       @ // TODO specify distancematrix resize --> Done
       @ ensures distanceMatrix.length == \old(distanceMatrix.length * 2);
+      //TOD0: Increase the size of horizontal array thats missing
       @ ensures (\forall int i, j; 0 <= i < postcodeCount && 0 <= j < postcodeCount; distanceMatrix[i][j] == \old(distanceMatrix[i][j]));
       @ ensures \fresh(postcodes) && \fresh(distanceMatrix);
       @*/
@@ -100,7 +101,7 @@ public class RouteNetwork {
      @ assignable postcodes, postcodeCount, distanceMatrix;
      @ ensures (\forall int i; 0 <= i && i < \old(postcodeCount); postcodes[i] == \old(postcodes[i]));
      @ ensures postcodes[\old(postcodeCount)] == postcode;
-     @ ensures distanceMatrix.length == \old(distanceMatrix.length) * 2;
+     @ ensures distanceMatrix.length == \old(distanceMatrix.length) * 2; // verify if i ceated double matrix correctly
      @ ensures (\forall int i, j; 0 <= i && i < \old(postcodeCount) && 0 <= j && j < \old(postcodeCount); distanceMatrix[i][j] == \old(distanceMatrix[i][j]));
      @ ensures \fresh(distanceMatrix) && \fresh(postcodes);
      @ ensures postcodeCount == \old(postcodeCount) + 1;
@@ -148,7 +149,7 @@ public class RouteNetwork {
 
     /* @ public normal_behavior
        @ requires distance >= 0;
-       @ assignable postcodeCount, postcodes, distanceMatrix;
+       @ assignable postcodeCount, postcodes, distanceMatrix[originIdx][destIdx];
        @ ensures getDistance(originPostcode, destPostcode) == distance;
        @ ensures (\exists int i; 0 <= i && i < getPostcodeCount(); postcodes[i] == originPostcode);
        @ ensures (\exists int i; 0 <= i && i < getPostcodeCount(); postcodes[i] == destPostcode);
