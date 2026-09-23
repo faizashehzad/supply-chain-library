@@ -15,7 +15,7 @@ public class Order {
     //@ represents productsInOrder = items.content;
 
     /*@ private invariant orderId > 0; @*/
-    private /*@ spec_public @*/ int orderId;
+    private int orderId;
 
     //@ private invariant (\forall int i; 0 <= i < productsInOrder.length; \seq_get(productsInOrder, i) != null );
     private /*@ spec_public @*/  List items;
@@ -23,7 +23,7 @@ public class Order {
     /*@ private normal_behavior
        requires orderId > 0;
        assignable this.orderId, this.items;
-       ensures this.orderId == orderId;
+       ensures this.getOrderId() == orderId;
        ensures productsInOrder == \seq_empty;
     */
     public Order(int orderId) {
@@ -52,7 +52,7 @@ public class Order {
       @ assignable items.content;
       @ ensures productsInOrder == \seq_concat(\old(productsInOrder), \seq_singleton(p));
     @*/
-    public void addItem(Product p) {
+    public void addItem(/*@ nullable@*/ Product p) {
         if (p != null) {
             items.add(p);
         }
@@ -62,7 +62,7 @@ public class Order {
       @ ensures \result == orderId;
       @ assignable \strictly_nothing;
     @*/
-    public int getOrderId() {
+    public /*@ pure @*/ int getOrderId() {
         return orderId;
     }
 
@@ -74,7 +74,7 @@ public class Order {
       @ ensures \result == productsInOrder.length;
       @ assignable \strictly_nothing;
     @*/
-    public int getQuantity() {
+    public /*@ pure @*/ int getQuantity() {
         return items.size();
     }
 
@@ -98,7 +98,7 @@ public class Order {
       @  ensures \old((index < 0 || index >= productsInOrder.length)) ==>  \result == null;
       @  assignable \strictly_nothing;
       @*/
-    public /*@ nullable @*/ Product getItem(int index) {
+    public /*@ nullable pure @*/ Product getItem(int index) {
         if (index >= 0 && index < items.size()) {
             return (Product) items.get(index);
         }
@@ -121,7 +121,7 @@ public class Order {
        @  ensures \fresh(\result);
       @*/
 
-    public List getAllItems() {
+    public /*@ pure @*/ List getAllItems() {
         return null;
                 //Collections.unmodifiableList(items);
     }
@@ -148,12 +148,6 @@ public class Order {
   * */
 
 
-
-
-
-
-
-
     /**
      * Calculates the total weight of the order.
      * Demonstrates a simple logic that can be easily specified in JML.
@@ -165,7 +159,7 @@ public class Order {
     @   requires (\forall int i; 0 <= i < productsInOrder.length; ((Product)\seq_get(productsInOrder, i)).getWeight() >= 0);
     @   ensures \result == (\sum int i; 0 <= i && i < productsInOrder.length; ((Product)\seq_get(productsInOrder, i)).getWeight());
     */
-    public int getTotalWeight() {
+    public /*@ pure @*/ int getTotalWeight() {
         int totalWeight = 0;
         for (int i = 0; i < items.size(); i++) {
             Product product = (Product) items.get(i);

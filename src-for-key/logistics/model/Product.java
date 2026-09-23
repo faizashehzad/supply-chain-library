@@ -6,22 +6,22 @@ package logistics.model;
  */
 public class Product {
 
-    /*@ public invariant id > 0; @*/
-    /*@ public invariant name.length() > 0; @*/
-    /*@ public invariant weight > 0; @*/
+    /*@ private invariant id > 0; @*/
+    /*@ private invariant name.length() > 0; @*/
+    /*@ private invariant weight > 0; @*/
 
-    private /*@ spec_public @*/ int id;
-    private /*@ spec_public @*/ String name;
-    private /*@ spec_public @*/ int weight;  // weight in kilograms, must be > 0
+    private  int id;
+    private String name;
+    private int weight;  // weight in kilograms, must be > 0
 
     /*@ public normal_behavior
       @ requires id > 0;
-      @ requires  name.length() > 0;
+      @ requires name.length() > 0;
       @ requires weight > 0;
       @ assignable \nothing;
-      @ ensures this.id == id;
-      @ ensures this.name.equals(name);
-      @ ensures this.weight == weight;
+      @ ensures this.getId() == id;
+      @ ensures this.getName().equals(name);
+      @ ensures this.getWeight() == weight;
      */
     public Product(int id, String name, int weight) {
         this.id     = id;
@@ -33,7 +33,7 @@ public class Product {
       @ ensures \result == id;
       @ assignable \strictly_nothing;
      */
-    public int getId() {
+    public /*@ pure @*/ int getId() {
         return id;
     }
 
@@ -42,7 +42,7 @@ public class Product {
       @ assignable \strictly_nothing;
      */
 
-    public String getName() {
+    public /*@ pure @*/ String getName() {
         return name;
     }
 
@@ -51,7 +51,7 @@ public class Product {
       @ assignable \strictly_nothing;
      */
 
-    public int getWeight() {
+    public /*@ pure @*/ int getWeight() {
         return weight;
     }
 

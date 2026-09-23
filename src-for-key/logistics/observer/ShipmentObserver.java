@@ -13,5 +13,16 @@ public interface ShipmentObserver {
     /**
      * Called by Warehouse whenever a shipment status changes.
      */
+
+    /*@ public normal_behavior
+      @ requires s == null;
+      @ assignable \strictly_nothing;
+      @
+      @ also
+      @
+      @ public normal_behavior
+      @ requires s != null;
+      @ assignable \everything; // Concrete observers refine frame conditions
+      @*/
     void onStatusChange(Shipment s);
 }

@@ -6,7 +6,7 @@ import logistics.model.Warehouse;
 
 public class ShipmentProcessor {
 
-    private /*@ spec_public @*/ RouteStrategy strategy;
+    private RouteStrategy strategy;
 
     /*@ public normal_behavior
       @ requires strategy != null;
@@ -22,7 +22,6 @@ public class ShipmentProcessor {
      * 1. Calculates the route cost using the private strategy
      * 2. Updates shipment status to IN_TRANSIT using the Shipment's own method.
      * 3. Notifies the warehouse observers.
-     *
      * Does nothing if shipment or warehouse is null.
      */
     //TODO:     Specify notify Observer part is still open have to think about observer pattern specification slides 5.2
