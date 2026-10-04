@@ -9,13 +9,15 @@ import logistics.model.Shipment;
  */
 public class AuditLogger implements ShipmentObserver {
 
-    /*@ private invariant logCount >= 0; @*/             //by default all the reference types are always not null; so we dont have to explicictly define the invariant for it.
+    //@ private represents footprint = \set_union(\singleton(this.logCount), \singleton(this.lastLogEntry));
+
+    /*@ private invariant logCount >= 0; @*/
     private  int logCount;
     private String  lastLogEntry; //changed the default
 
 
     /*@ public normal_behavior
-      @ assignable this.logCount, this.lastLogEntry;
+      @ assignable \nothing;
       @ ensures this.getLogCount() == 0;
       @ ensures this.getLastLogEntry().isEmpty();
      */
@@ -26,17 +28,18 @@ public class AuditLogger implements ShipmentObserver {
 
     /*@ public normal_behavior
       @ requires s == null;
-      @ assignable \strictly_nothing;
+      @ assignable \nothing;
       @
       @ also
+      @
       @ public normal_behavior
       @ requires s != null;
-      @ assignable logCount, lastLogEntry;
+      @ assignable footprint;
       @ ensures logCount == \old(getLogCount()) + 1;
       @ ensures !getLastLogEntry().isEmpty();
-     */
+      */
 
-    public void onStatusChange(/*@nullable */Shipment s) {
+    public void onStatusChange(/*@ nullable */ Shipment s) {
         if (s == null) {
             return;
         }
@@ -47,7 +50,6 @@ public class AuditLogger implements ShipmentObserver {
     }
 
     /*@ public normal_behavior
-      @ assignable \strictly_nothing;
       @ ensures \result == logCount;
      */
     public /*@ pure @*/ int getLogCount() {
@@ -55,7 +57,6 @@ public class AuditLogger implements ShipmentObserver {
     }
 
     /*@ public normal_behavior
-      @ assignable \strictly_nothing;
       @ ensures \result == lastLogEntry;
      */
     public /*@ pure @*/ String getLastLogEntry() {

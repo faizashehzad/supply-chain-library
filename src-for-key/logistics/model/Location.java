@@ -20,14 +20,11 @@ public class Location {
         this.postcode = postcode;
     }
 
-      //TODO; put in equals method which returns true if post code is same or the combination of postcode and name are equal
-     // TODO: Hashcode function method and equals method should satisfy their contract. ---addressed
-    /*@ private normal_behavior
+    
+    /*@ public normal_behavior
       @ assignable \strictly_nothing;
       @ ensures \result == (obj instanceof Location && ((Location)obj).postcode == this.postcode); //usequery method
-      @ also
-      @ public normal_behavior ....
-      @*/
+      */
 
     public /*@ strictly_pure @*/ boolean equals(/*@ nullable @*/ Object obj) {
         if (obj instanceof Location) {
@@ -39,14 +36,13 @@ public class Location {
      /*@ public normal_behavior
        @ ensures \result == postcode;
        @ assignable \strictly_nothing;
-       @*/
+       */
      public /*@ strictly_pure @*/ int hashCode() {
          return postcode;
      }
 
     /*@ public normal_behavior
       @ ensures \result.equals(name);
-      @ assignable \strictly_nothing;
      */
     public /*@ strictly_pure @*/ String getName() {
         return name;
@@ -55,7 +51,6 @@ public class Location {
 
     /*@ public normal_behavior
       @ ensures \result == postcode;
-      @ assignable \strictly_nothing;
      */
     public /*@ strictly_pure @*/ int getPostcode() { // Getter updated to return int
         return postcode;

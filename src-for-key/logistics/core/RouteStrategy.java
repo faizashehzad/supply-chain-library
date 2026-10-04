@@ -17,15 +17,20 @@ public interface RouteStrategy {
      * Calculates and returns a route cost for the given shipment.
      * The returned value must be >= 0.
      */
+    //@ public instance model  \locset footprint;
+
      /*@ public normal_behavior
        @ requires s == null;
+       @ assignable \nothing;
        @ ensures \result == 0;
+       @
        @
        @ also
        @
        @ public normal_behavior
        @ requires s != null;
        @ ensures \result >= 0;
+       @ assignable \nothing; // Concrete Strategy refine frame conditions
       */
     public /*@ pure @*/ int calculateRoute(/*@ nullable @*/ Shipment s);
 }

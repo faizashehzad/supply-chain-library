@@ -16,7 +16,7 @@ public class Product {
 
     /*@ public normal_behavior
       @ requires id > 0;
-      @ requires name.length() > 0;
+      @ requires  name.length() > 0;
       @ requires weight > 0;
       @ assignable \nothing;
       @ ensures this.getId() == id;
@@ -30,16 +30,16 @@ public class Product {
     }
 
     /*@ public normal_behavior
-      @ ensures \result == id;
-      @ assignable \strictly_nothing;
+      @ ensures \result == getId(); //private
+      @ accessible this.*;
      */
+
     public /*@ pure @*/ int getId() {
         return id;
     }
 
     /*@ public normal_behavior
       @ ensures \result.equals(name);
-      @ assignable \strictly_nothing;
      */
 
     public /*@ pure @*/ String getName() {
@@ -48,7 +48,6 @@ public class Product {
 
     /*@ public normal_behavior
       @ ensures \result == weight;
-      @ assignable \strictly_nothing;
      */
 
     public /*@ pure @*/ int getWeight() {

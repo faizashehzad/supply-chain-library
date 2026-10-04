@@ -13,7 +13,7 @@ public class Shipment {
 
     /*@ private invariant shipmentId > 0; @*/
     /*@ private invariant status == PENDING || status == IN_TRANSIT || status == DELIVERED; @*/
-    /*@ private invariant (origin != null && destination != null) ==> !origin.equals(destination); @*/ //TODO: make it with equals ---addressed
+    /*@ private invariant !origin.equals(destination); @*/
 
     private int shipmentId;
     private /*@ spec_public @*/ int      status;
@@ -23,14 +23,13 @@ public class Shipment {
 
 
 
-    //TODO: make it with equals requires origin != destination;
     /*@ public normal_behavior
       @ requires shipmentId > 0;
       @ requires origin != null && destination != null && order != null;
       @ requires !origin.equals(destination);
       @ assignable \nothing;
       @ ensures this.getShipmentId() == shipmentId;
-      @ ensures this.status == PENDING;
+      @ ensures this.getStatus() == PENDING; 
       @ ensures this.getorigin().equals(origin);
       @ ensures this.getdestination().equals(destination);
       @ ensures this.getOrder() == order;
@@ -58,7 +57,6 @@ public class Shipment {
     }
 
     /*@ public normal_behavior
-       @ assignable \strictly_nothing;
        @ ensures \result == shipmentId;
      */
     public /*@ pure @*/ int getShipmentId() {
@@ -66,25 +64,24 @@ public class Shipment {
     }
 
     /*@ public normal_behavior
-       @ assignable \strictly_nothing;
-       @ ensures \result == status;
+       @ ensures \result == status; 
      */
     public /*@ pure @*/ int getStatus() {
         return status;
     }
 
     /*@ public normal_behavior
-       @ requires this.status == PENDING;
-       @ assignable this.status;
-       @ ensures this.status == IN_TRANSIT;
-       @
-       @ also
-       @
-       @ public exceptional_behavior
-       @ requires this.status != PENDING;
-       @ assignable \nothing;
-       @ signals_only RuntimeException;
-       @ signals (RuntimeException e) e.getMessage().equals("Shipment must be PENDING to transition to IN_TRANSIT.");
+      @ requires this.status == PENDING;
+      @ assignable this.status;
+      @ ensures this.status == IN_TRANSIT;
+      @
+      @ also
+      @
+      @ public exceptional_behavior
+      @ requires this.status != PENDING;
+      @ assignable \nothing;
+      @ signals_only RuntimeException;
+      @ signals (RuntimeException e) e.getMessage().equals("Shipment must be PENDING to transition to IN_TRANSIT.");
      */
     public void markInTransit() {
         if (this.status != PENDING) {
@@ -94,16 +91,16 @@ public class Shipment {
     }
 
     /*@ public normal_behavior
-       @ requires this.status == IN_TRANSIT;
-       @ assignable this.status;
-       @ ensures this.status == DELIVERED;
-       @
-       @ also
-       @ public exceptional_behavior
-       @ requires this.status != IN_TRANSIT;
-       @ assignable \nothing;
-       @ signals_only RuntimeException;
-       @ signals (RuntimeException e) e.getMessage().equals("Shipment must be IN_TRANSIT to transition to DELIVERED.");
+      @ requires this.status == IN_TRANSIT;
+      @ assignable this.status;
+      @ ensures this.status == DELIVERED;
+      @
+      @ also
+      @ public exceptional_behavior
+      @ requires this.status != IN_TRANSIT;
+      @ assignable \nothing;
+      @ signals_only RuntimeException;
+      @ signals (RuntimeException e) e.getMessage().equals("Shipment must be IN_TRANSIT to transition to DELIVERED.");
      */
     public void markDelivered() {
         if (this.status != IN_TRANSIT) {
@@ -139,25 +136,22 @@ public class Shipment {
     }
 
     /*@ public normal_behavior
-       @ assignable \strictly_nothing;
-       @ ensures \result == origin;
-     */
+      @ ensures \result == origin;
+    */
     public /*@ pure @*/ Location getOrigin() {
         return origin;
     }
 
     /*@ public normal_behavior
-       @ assignable \strictly_nothing;
-       @ ensures \result == destination;
-     */
+      @ ensures \result == destination;
+      */
     public /*@ pure @*/ Location getDestination() {
         return destination;
     }
 
     /*@ public normal_behavior
-       @ assignable \strictly_nothing;
-       @ ensures \result == order;
-     */
+      @ ensures \result == order;
+    */
     public /*@ pure @*/ Order getOrder() {
         return order;
     }

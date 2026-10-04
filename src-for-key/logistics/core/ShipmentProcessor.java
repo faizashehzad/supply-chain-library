@@ -24,7 +24,9 @@ public class ShipmentProcessor {
      * 3. Notifies the warehouse observers.
      * Does nothing if shipment or warehouse is null.
      */
-    //TODO:     Specify notify Observer part is still open have to think about observer pattern specification slides 5.2
+    
+    //TODO:Specify notify Observer part is still open have to think about observer pattern specification slides 5.2
+    
     /*@ public  normal_behavior
       @ requires s == null || w == null;
       @ assignable \strictly_nothing;
@@ -35,8 +37,9 @@ public class ShipmentProcessor {
       @ public normal_behavior
       @ requires s != null && w != null && s.status == Shipment.PENDING;
       @ ensures \result >= 0;
-      @ assignable \everything;
+      @ assignable w.footprint,s.status;
       @ ensures s.status == Shipment.IN_TRANSIT;
+      @
       @ also
       @
       @ public exceptional_behavior
@@ -62,23 +65,23 @@ public class ShipmentProcessor {
      * Does nothing if shipment or warehouse is null.
      */
     /*@ public normal_behavior
-        @ requires s == null || w == null;
-        @ assignable \strictly_nothing;
-        @
-        @ also
-        @
-        @ public normal_behavior
-        @ requires s != null && w != null && s.status == Shipment.IN_TRANSIT;
-        @ assignable s.status;
-        @ ensures s.status == Shipment.DELIVERED;
-        @
-        @ also
-        @
-        @ public exceptional_behavior
-        @ requires s != null && w != null && s.status != Shipment.IN_TRANSIT;
-        @ assignable \nothing;
-        @ signals_only RuntimeException;
-        @ signals (RuntimeException e) true;
+      @ requires s == null || w == null;
+      @ assignable \strictly_nothing;
+      @
+      @ also
+      @
+      @ public normal_behavior
+      @ requires s != null && w != null && s.status == Shipment.IN_TRANSIT;
+      @ assignable s.status;
+      @ ensures s.status == Shipment.DELIVERED;
+      @
+      @ also
+      @
+      @ public exceptional_behavior
+      @ requires s != null && w != null && s.status != Shipment.IN_TRANSIT;
+      @ assignable \nothing;
+      @ signals_only RuntimeException;
+      @ signals (RuntimeException e) true;
      */
 
     public void completeShipment(/*@ nullable @*/Shipment s, /*@ nullable @*/ Warehouse w) {

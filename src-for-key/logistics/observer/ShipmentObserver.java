@@ -10,19 +10,24 @@ import logistics.model.Shipment;
  */
 public interface ShipmentObserver {
 
+    // TODO: Footprint modelfield and it must be instance field, and then we change assignable will be then changed footprint.
     /**
      * Called by Warehouse whenever a shipment status changes.
      */
+     // Abstract instance model location set for the dynamic frame of the observer
+    
+     //@ public instance model \locset footprint;
+
 
     /*@ public normal_behavior
       @ requires s == null;
-      @ assignable \strictly_nothing;
+      @ assignable \nothing;
       @
       @ also
       @
       @ public normal_behavior
       @ requires s != null;
-      @ assignable \everything; // Concrete observers refine frame conditions
-      @*/
+      @ assignable footprint; // Concrete observers refine frame conditions
+      */
     void onStatusChange(Shipment s);
 }
