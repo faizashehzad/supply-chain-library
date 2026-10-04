@@ -4,41 +4,85 @@ import logistics.model.Location;
 
 public class LocationRegistry {
 
-    /*@ public instance invariant locations != null;
-      @ public instance invariant locationCount >= 0 && locationCount <= locations.length;
-      @ public instance invariant (\forall int i; 0 <= i && i < locationCount; locations[i] != null);
-      @ public instance invariant (\forall int i, j; 0 <= i && i < locationCount && 0 <= j && j < locationCount;
-                            i != j ==> locations[i].getPostcode() != locations[j].getPostcode());
-    @*/
-    // Flat array to store the Location objects: After the array initlaization since its reference type is array its entries are null by default
-    private /*@ spec_public nullable @*/ Location[] locations;
-    private /*@ spec_public @*/ int locationCount;
+    // ==========================================
+    // Public Model Fields
+    // ==========================================
+
+    //@ public model \seq locationsInRegistry;
+    //@ public model int registryCapacity;
+    //@ public model \locset footprint;
+
+    // ==========================================
+    // Private Represents (Model-to-field Mapping)
+    // ==========================================
+
+// TODO: locations in regsitry already gives the count by being strict betwenn 0 and length we dont need invaraint for it.
+
+    //@ private represents locationsInRegistry = \seq_sub(\array2seq(locations), 0, locationCount); 
+    //@ private represents registryCapacity = locations.length;
+    //@ private represents footprint = \set_union(\set_union(\singleton(this.locations), \singleton(this.locationCount)), locations[*]);
+
+    // ==========================================
+    // Public Invariants (Visible to Callers)
+    // ==========================================
+
+    //@ public instance invariant (\forall int i; 0 <= i < locationsInRegistry.length; \seq_get(locationsInRegistry, i) != null); 
+    //@ public instance invariant (\forall int i, j; 0 <= i < locationsInRegistry.length && i < j && j < locationsInRegistry.length; ((Location)\seq_get(locationsInRegistry, i)).getPostcode() != ((Location)\seq_get(locationsInRegistry, j)).getPostcode());
+
+    // ==========================================
+    // Private Concrete Fields & Invariants
+    // ==========================================
+
+    // private invariant locations != null; @*/
+    // private invariant locationCount >= 0 && locationCount <= locations.length; @*/
+    // private invariant (\forall int i; 0 <= i && i < locationCount; locations[i] != null); @*/
+    // private invariant (\forall int i, j; 0 <= i && i < locationCount && 0 <= j && j < locationCount && i != j; locations[i].getPostcode() != locations[j].getPostcode()); @*/ // same as above
+
+    // Flat array to store the Location objects: After the array initlaization since
+    // its reference type is array its entries are null by default
+    private /*@ nullable @*/ Location[] locations;
+    private int locationCount;
 
     // Small initial capacity to easily trigger and demonstrate resizing
-    private /*@ spec_public @*/ static final int INITIAL_CAPACITY = 4;
+    private static final int INITIAL_CAPACITY = 4;
+
+    // ==========================================
+    // Constructor Specification
+    // ==========================================
+
 
     /*@ public normal_behavior
-      @ ensures locationCount == 0;
-      @ ensures locations.length == INITIAL_CAPACITY;
-      @ ensures \fresh(locations);
+      @ ensures getLocationCount() == 0;
+      @ ensures locationsInRegistry == \seq_empty;
       @ assignable \nothing;
-      @*/
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ ensures this.locationCount == 0;
+      @ ensures this.locations != null; // assignable nothing again
+      @ ensures registryCapacity == INITIAL_CAPACITY;
+      @ ensures \fresh(this.locations);
+      @ assignable \nothing;
+      */
     public LocationRegistry() {
         this.locations = new Location[INITIAL_CAPACITY];
         this.locationCount = 0;
     }
+
 
     /**
      * Dynamically doubles the capacity of the locations array.
      * Implemented using a plain loop so that KeY can easily track the heap
      * transfers.
      */
-    /*@ public normal_behavior
+    /*@ private normal_behavior
+      @ ensures locationCount == \old(locationCount);
       @ ensures locations.length == \old(locations.length * 2);
       @ assignable locations;
-      @ ensures(\forall int i; 0 <= i && i < \old(locations.length); locations[i] == \old(locations[i]));
+      @ ensures(\forall int i; 0 <= i && i < locationCount; locations[i] == \old(locations[i]));
       @ ensures \fresh(locations);
-      @ */
+    */
 
     private void resize() {
         int oldCapacity = locations.length;
@@ -59,8 +103,9 @@ public class LocationRegistry {
       @ ensures (\result == -1) ==> (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != postcode);
       @ ensures (\result != -1) ==> (0 <= \result && \result < locationCount && locations[\result].getPostcode() == postcode);
       @ assignable \strictly_nothing;
-      @*/
-    private int getIndexByPostcode(int postcode) {
+    */
+
+    private /*@ pure @*/ int getIndexByPostcode(int postcode) {
         for (int i = 0; i < locationCount; i++) {
             // Guarding against potential null elements in the array
             if (locations[i] != null && locations[i].getPostcode() == postcode) {
@@ -69,37 +114,39 @@ public class LocationRegistry {
         }
         return -1;
     }
-    // TODO specify resize of the array case: Done --> last scenario
     /*@ public normal_behavior
       @ requires location == null;
-      @ assignable \strictly_nothing;
+      @ assignable \nothing;
       @
       @ also
       @
       @ public normal_behavior
-      @ requires (\exists int i; 0 <= i && i < locationCount; locations[i].getPostcode() == location.getPostcode());
-      @ assignable \strictly_nothing;
+      @ requires location != null;
+      @ requires getLocationByPostcode(location.getPostcode()) != null;
+      @ assignable \nothing;
       @
       @ also
       @
       @ public normal_behavior
-      @ requires (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != location.getPostcode());
-      @ requires locationCount < locations.length;
-      @ ensures locationCount == \old(locationCount) + 1;
-      @ ensures locations[\old(locationCount)] == location;
-      @ assignable locationCount, locations[locationCount];
+      @ requires location != null;
+      @ requires getLocationByPostcode(location.getPostcode()) == null;
+      @ requires getLocationCount() < registryCapacity;
+      @ ensures getLocationCount() == \old(getLocationCount()) + 1;
+      @ ensures getLocationByPostcode(location.getPostcode()) == location;
+      @ assignable footprint;
+      @
       @ also
+      @
       @ public normal_behavior
-      @ requires (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != location.getPostcode());
-      @ requires locationCount >= locations.length;
-      @ ensures locations.length == \old(locations.length) * 2;
-      @ assignable locations, locationCount;
-      @ ensures(\forall int i; 0 <= i && i < \old(locations.length); locations[i] == \old(locations[i]));
-      @ ensures \fresh(locations);
-      @ ensures locationCount == \old(locationCount) + 1;
-      @ ensures locations[\old(locationCount)] == location;
-      @*/
-
+      @ requires location != null;
+      @ requires getLocationByPostcode(location.getPostcode()) == null;
+      @ requires getLocationCount() >= registryCapacity;
+      @ ensures registryCapacity == \old(registryCapacity) * 2;
+      @ ensures getLocationCount() == \old(getLocationCount()) + 1;
+      @ ensures getLocationByPostcode(location.getPostcode()) == location;
+      @ ensures (\forall int i; 0 <= i < \old(locationsInRegistry.length); \seq_get(locationsInRegistry, i) == \old(\seq_get(locationsInRegistry, i)));
+      @ assignable footprint;
+     */
     public void addLocation(/*@ nullable @*/Location location) {
         if (location == null) {
             return;
@@ -118,11 +165,10 @@ public class LocationRegistry {
     }
 
     /*@ public normal_behavior
-    @ ensures \result != null ==> \result.getPostcode() == postcode;
-    @ ensures \result == null ==> (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != postcode);
-    @ assignable \strictly_nothing;
-    @*/
-    public /*@nullable */ Location getLocationByPostcode(int postcode) {
+      @ ensures \result != null ==> \result.getPostcode() == postcode;
+      @ ensures \result == null ==> (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != postcode);
+    */
+    public /*@ nullable pure @*/ Location getLocationByPostcode(int postcode) {
         int idx = getIndexByPostcode(postcode);
         if (idx != -1) {
             return locations[idx];
@@ -136,23 +182,21 @@ public class LocationRegistry {
      * This mimics the safety of "unmodifiableList" by returning a copy.
      */
     /*@ public normal_behavior
-      @ assignable \nothing;
       @ ensures \result.length == locationCount;
       @ ensures (\forall int i; 0 <= i && i < locationCount; \result[i] == locations[i]);
       @ ensures \fresh(\result);
      */
-    public Location[] getAllLocations() {
+    public /*@ pure @*/ Location[] getAllLocations() {
         Location[] copy = new Location[locationCount];
         for (int i = 0; i < locationCount; i++) {
             copy[i] = locations[i];
         }
         return copy;
     }
-     /*@ public normal_behavior
-       @ ensures \result == locationCount;
-       @ assignable \strictly_nothing;
-     */
-    public int size() {
+    /*@ public normal_behavior
+      @ ensures \result == locationCount;
+      */
+    public /*@ pure @*/ int getLocationCount() {
         return locationCount;
     }
 }

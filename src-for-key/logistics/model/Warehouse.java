@@ -7,39 +7,70 @@ import java.util.List;
 
 /**
  * Central hub of the supply chain library.
- *
  * Stores shipments in a private list.
  * Maintains a private list of observers who are notified
  * whenever a shipment status changes.
- *
  * Clients interact only through public methods.
  */
 public class Warehouse {
 
+    // ==========================================
+    // Public Model Fields
+    // ==========================================
 
-    /*@ public model \seq shipments; @*/
-    /*@ public represents shipments = inventory.content; @*/
-    /*@ public model \seq registeredObservers; @*/
-    /*@ public represents registeredObservers = observers.content; @*/
+    //@ public model \seq shipmentsInventory;
+    //@ public model \seq registeredShipmentObservers;
+    //@ public model \locset footprint; 
 
-    //@ private invariant (\forall int i; 0 <= i < shipments.length; \seq_get(shipments, i) != null );
-    // private List<Shipment> inventory;
-    private /*@ spec_public @*/ List inventory;
+    // ==========================================
+    // Private Represents
+    // ==========================================
 
-    //@ private invariant (\forall int i; 0 <= i < registeredObservers.length; \seq_get(registeredObservers, i) != null );
-    //private List<ShipmentObserver> observers;
-    private /*@ spec_public @*/ List observers;
-    /*@ public invariant name != null && name.length() > 0; @*/
-    private /*@ spec_public @*/ String name;
+    //@ private represents shipmentsInventory = inventory.content;
+    //@ private represents registeredShipmentObservers = observers.content;
+    //@ private represents footprint = \set_union(\singleton(this.name), \set_union(\singleton(this.inventory), \set_union(inventory.content, \set_union(\singleton(this.observers), observers.content)))); // TODO: Split the footprint
+   
+    // ==========================================
+    // Public Invariants (Visible to Callers)
+    // ==========================================
+   // TODO: look into array sytax for sequences
 
+    //@ public invariant (\forall int i; 0 <= i < shipmentsInventory.length; \seq_get(shipmentsInventory, i) != null );
+    //@ public invariant (\forall int i; 0 <= i < registeredShipmentObservers.length;\seq_get(registeredShipmentObservers, i) != null );
+    //@ public invariant getName().length() > 0;
 
-   /*@ public normal_behavior
-     @ requires name != null && name.length() > 0;
-     @ assignable \nothing;
-     @ ensures this.name == name;
-     @ ensures this.shipments.length == 0;
-     @ ensures this.registeredObservers.length == 0;
-   */
+    // ==========================================
+    // Private Concrete Fields & Invariants
+    // ==========================================
+
+    //all reference types are null by defaultttttttt no need of invariants
+    private List inventory;
+
+    private List observers;
+
+   //@ private invariant name == getName();
+    private String name;
+
+    // ==========================================
+    // Constructor Specification
+    // ==========================================
+
+    /*@ public normal_behavior
+      @ requires name.length() > 0;
+      @ assignable \nothing;
+      @ ensures this.getName() == name;
+      @ ensures shipmentsInventory == \seq_empty;
+      @ ensures registeredShipmentObservers == \seq_empty;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ requires name.length() > 0;
+      @ assignable \nothing;
+      @ ensures this.name == name;
+      @ ensures shipmentsInventory == \seq_empty;
+      @ ensures registeredShipmentObservers == \seq_empty;
+      @*/
 
     public Warehouse(String name) {
         this.name = name;
@@ -51,20 +82,20 @@ public class Warehouse {
      * Adds a shipment to the warehouse inventory.
      * Does nothing if shipment is null or duplicate.
      */
-    /*@ public normal_behavior
-      @ requires s != null;
-      @ assignable inventory.content;
-      @ ensures shipments == \seq_concat(\old(shipments), \seq_singleton(s));
-      @ ensures shipments.length == \old(shipments.length) + 1;
-      @
-      @ also
-      @ public normal_behavior
-      @ requires s == null;
-      @ assignable \strictly_nothing;
-      @ ensures shipments == \old(shipments);
 
-     */
-    //TODO: MAke the arg Nullable
+   /*@ public normal_behavior
+     @ requires s != null;
+     @ assignable footprint;
+     @ ensures shipmentsInventory == \seq_concat(\old(shipmentsInventory), \seq_singleton(s));
+     @ ensures shipmentsInventory.length == \old(shipmentsInventory.length) + 1;
+     @
+     @ also
+     @
+     @ public normal_behavior
+     @ requires s == null;
+     @ assignable \nothing;
+    */
+
     public void addToInventory(/*@ nullable @*/ Shipment s) {
         if (s != null) {
             inventory.add(s);
@@ -77,24 +108,17 @@ public class Warehouse {
      */
 
     /*@ public normal_behavior
-      @ requires o != null && !(\exists int x; 0 <= x < registeredObservers.length; ((ShipmentObserver)\seq_get(registeredObservers, x)).equals(o));
-      @ assignable observers.content;
-      @ ensures registeredObservers == \seq_concat(\old(registeredObservers), \seq_singleton(o));
-      @ ensures registeredObservers.length == \old(registeredObservers.length) + 1;
+      @ requires o != null && !(\exists int x; 0 <= x < registeredShipmentObservers.length;((ShipmentObserver)\seq_get(registeredShipmentObservers, x)).equals(o));
+      @ assignable footprint;
+      @ ensures registeredShipmentObservers == \seq_concat(\old(registeredShipmentObservers), \seq_singleton(o));
+      @ ensures registeredShipmentObservers.length == \old(registeredShipmentObservers.length) + 1;
       @
       @ also
-      @ public normal_behavior
-      @ requires o == null;
-      @ assignable \strictly_nothing;
-      @ ensures registeredObservers == \old(registeredObservers); //TODO: redundant, and  try to combine last two also
       @
-      @ also
       @ public normal_behavior
-      @ requires o != null && (\exists int x; 0 <= x < registeredObservers.length; ((ShipmentObserver)\seq_get(registeredObservers, x)).equals(o));
+      @ requires o == null ||(\exists int x; 0 <= x < registeredShipmentObservers.length; ((ShipmentObserver)\seq_get(registeredShipmentObservers, x)).equals(o));
       @ assignable \strictly_nothing;
-      @ ensures registeredObservers == \old(registeredObservers);
-     */
-
+    */
     public void addObserver(/*@ nullable @*/ ShipmentObserver o) {
         if (o != null && !observers.contains(o)) {
             observers.add(o);
@@ -107,55 +131,49 @@ public class Warehouse {
      */
 
     /*@ public normal_behavior
-       @ requires s == null;
-       @ assignable \strictly_nothing;
-       @ ensures shipments == \old(shipments);
-       @ ensures registeredObservers == \old(registeredObservers);
-       @
-       @ also
-       @ public normal_behavior
-       @ requires s != null;
-       @ ensures shipments == \old(shipments);
-       @ ensures registeredObservers == \old(registeredObservers);
+     @ requires s == null;
+     @ assignable \strictly_nothing;
+     @
+     @ also
+     @
+     @ public normal_behavior
+     @ requires s != null;
+     @ assignable footprint;
+     @ ensures shipmentsInventory == \old(shipmentsInventory);
+     @ ensures registeredShipmentObservers == \old(registeredShipmentObservers);
      */
-
     public void notifyObservers(/*@ nullable @*/ Shipment s) {
-        if (s == null) return;
-        for ( int i = 0; i < observers.size(); i++ ) {
+        if (s == null)
+            return;
+        for (int i = 0; i < observers.size(); i++) {
             final ShipmentObserver obs = (ShipmentObserver) observers.get(i);
             obs.onStatusChange(s);
         }
     }
 
-
-     /*@ public normal_behavior
-       @ assignable \strictly_nothing;
-       @ ensures (0 <= index && index < shipments.length) ==> (\result != null && \result == \seq_get(shipments, index));
-       @ ensures (index < 0 || index >= shipments.length) ==> (\result == null);
+    /*@ public normal_behavior
+      @ ensures (0 <= index && index < shipmentsInventory.length) ==> (\result != null && \result == \seq_get(shipmentsInventory, index));
+      @ ensures (index < 0 || index >= shipmentsInventory.length) ==> (\result == null);
      */
 
     // Returns the shipment at the given index, or null if out of rangee
-    public Shipment getShipment(int index) {
+    public /*@ pure @*/ Shipment getShipment(int index) {
         if (index >= 0 && index < inventory.size()) {
-            return (Shipment)inventory.get(index);
+            return (Shipment) inventory.get(index);
         }
         return null;
     }
 
-     /*@ public normal_behavior
-       @ assignable \strictly_nothing;
-       @ ensures (\exists int i; 0 <= i < shipments.length; ((Shipment)\seq_get(shipments, i)).getShipmentId() == shipmentId)
-       @           ==>  (\exists int i; 0 <= i < shipments.length;
-       @                            ((Shipment)\seq_get(shipments, i)).getShipmentId() == shipmentId
-       @                            && \result == \seq_get(shipments, i));
-       @ ensures (\forall int i; 0 <= i < shipments.length; ((Shipment)\seq_get(shipments, i)).getShipmentId() != shipmentId)
-       @           ==> (\result == null);
+    /*@ public normal_behavior
+      @ assignable \strictly_nothing;
+      @ ensures (\exists int i; 0 <= i < shipmentsInventory.length;((Shipment)\seq_get(shipmentsInventory, i)).getShipmentId() == shipmentId) ==> (\exists int i; 0 <= i < shipmentsInventory.length; ((Shipment)\seq_get(shipmentsInventory, i)).getShipmentId() == shipmentId && \result == \seq_get(shipmentsInventory, i));
+      @ ensures (\forall int i; 0 <= i < shipmentsInventory.length; ((Shipment)\seq_get(shipmentsInventory, i)).getShipmentId() != shipmentId) ==> (\result == null);
      */
 
     // Retrieves a Shipment from the warehouse inventory by its unique shipment ID.
-       public Shipment getShipmentById(int shipmentId) {
+    public /*@ pure @*/ Shipment getShipmentById(int shipmentId) {
         for (int i = 0; i < inventory.size(); i++) {
-            Shipment s = (Shipment)inventory.get(i);
+            Shipment s = (Shipment) inventory.get(i);
             if (s.getShipmentId() == shipmentId) {
                 return (Shipment) s;
             }
@@ -164,22 +182,23 @@ public class Warehouse {
     }
 
     /*@ public normal_behavior
-      @ assignable \strictly_nothing;
-      @ ensures \result == shipments.length;
+      @ ensures \result == shipmentsInventory.length;
      */
-    public int getInventoryCount() {
+    public /*@ pure @*/ int getInventoryCount() {
         return inventory.size();
     }
 
     /*@ public normal_behavior
-         @ assignable \strictly_nothing;
-         @ ensures \result == registeredObservers.length;
-        */
-    public int getObserverCount() {
+      @ ensures \result == registeredShipmentObservers.length;
+    */
+    public /*@ pure @*/ int getObserverCount() {
         return observers.size();
     }
 
-    public String getName() {
+    /*@ public normal_behavior
+      @ ensures \result == getName(); //TODO: put length public invariant that length is greater than 0 Done
+    */
+    public /*@ pure @*/ String getName() {
         return name;
     }
 

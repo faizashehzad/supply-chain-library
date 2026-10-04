@@ -9,15 +9,17 @@ import logistics.model.Shipment;
  */
 public class AuditLogger implements ShipmentObserver {
 
-    /*@ public invariant logCount >= 0; @*/             //by default all the reference types are always not null; so we dont have to explicictly define the invariant for it.
-    private /*@ spec_public @*/ int logCount;
-    private /*@ spec_public @*/ String  lastLogEntry; //changed the default
+    //@ private represents footprint = \set_union(\singleton(this.logCount), \singleton(this.lastLogEntry));
+
+    /*@ private invariant logCount >= 0; @*/
+    private  int logCount;
+    private String  lastLogEntry; //changed the default
 
 
     /*@ public normal_behavior
-      @ assignable this.logCount, this.lastLogEntry;
-      @ ensures this.logCount == 0;
-      @ ensures this.lastLogEntry.isEmpty();
+      @ assignable \nothing;
+      @ ensures this.getLogCount() == 0;
+      @ ensures this.getLastLogEntry().isEmpty();
      */
     public AuditLogger() {
         this.logCount    = 0;
@@ -26,17 +28,18 @@ public class AuditLogger implements ShipmentObserver {
 
     /*@ public normal_behavior
       @ requires s == null;
-      @ assignable \strictly_nothing;
+      @ assignable \nothing;
       @
       @ also
+      @
       @ public normal_behavior
       @ requires s != null;
-      @ assignable logCount, lastLogEntry;
-      @ ensures logCount == \old(logCount) + 1;
-      @ ensures !lastLogEntry.isEmpty();
-     */
+      @ assignable footprint;
+      @ ensures logCount == \old(getLogCount()) + 1;
+      @ ensures !getLastLogEntry().isEmpty();
+      */
 
-    public void onStatusChange(/*@nullable */Shipment s) {
+    public void onStatusChange(/*@ nullable */ Shipment s) {
         if (s == null) {
             return;
         }
@@ -47,18 +50,16 @@ public class AuditLogger implements ShipmentObserver {
     }
 
     /*@ public normal_behavior
-      @ assignable \strictly_nothing;
       @ ensures \result == logCount;
      */
-    public int getLogCount() {
+    public /*@ pure @*/ int getLogCount() {
         return logCount;
     }
 
     /*@ public normal_behavior
-      @ assignable \strictly_nothing;
       @ ensures \result == lastLogEntry;
      */
-    public String getLastLogEntry() {
+    public /*@ pure @*/ String getLastLogEntry() {
         return lastLogEntry;
     }
 }

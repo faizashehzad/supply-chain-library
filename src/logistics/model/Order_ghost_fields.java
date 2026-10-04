@@ -54,7 +54,7 @@ public class Order_ghost_fields {
       @ ensures orderItems == \seq_concat(\old(orderItems), \seq_singleton(p));
     @*/
 
-    public void addItem(Product p) {
+    public void addItem(logistics.model.Product p) {
         if (p != null) {
             items.add(p);
             //@ set orderItems = \seq_concat(\old(orderItems), \seq_singleton(p));
@@ -98,9 +98,9 @@ public class Order_ghost_fields {
       @ ensures (0 <= index && index < orderItems.length) ==> (\result != null && \result == \seq_get(orderItems, index));
       @ ensures (index < 0 || index >= orderItems.length) ==> (\result == null);
     */
-    public Product /*@ nullable @*/ getItem(int index) {
+    public logistics.model.Product /*@ nullable @*/ getItem(int index) {
         if (index >= 0 && index < items.size()) {
-            return (Product) items.get(index);
+            return (logistics.model.Product) items.get(index);
         }
         return null;
     }
@@ -163,7 +163,7 @@ public class Order_ghost_fields {
     public int getTotalWeight() {
         int totalWeight = 0;
         for (int i = 0; i < items.size(); i++) {
-            Product product = (Product) items.get(i);
+            logistics.model.Product product = (logistics.model.Product) items.get(i);
             if (product != null) {
                 totalWeight += product.getWeight();
             }

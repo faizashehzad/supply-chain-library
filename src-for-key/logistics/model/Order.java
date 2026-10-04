@@ -10,35 +10,68 @@ import java.util.List;
  */
 public class Order {
 
-
+    // ==========================================
+    // Public Model Fields
+    // ==========================================
     //@ public model \seq productsInOrder;
-    //@ represents productsInOrder = items.content;
+    //@ public model int id;
+    //@ public model \locset footprint;
+
+    // ==========================================
+    // Private Represents (Model-to-Concrete Mapping)
+    // ==========================================
+    //@ private represents id = orderId;
+    //@ private represents productsInOrder = items.content;
+    //@ private represents footprint = \set_union(\singleton(this.orderId), \set_union(\singleton(this.items), items.content));
+    // ==========================================
+    // Public Invariants (Visible to Callers)
+    // ==========================================
+    //@ public invariant id > 0;
+    //@ public invariant (\forall int i; 0 <= i < productsInOrder.length; \seq_get(productsInOrder, i) != null);
+
+    // ==========================================
+    // Private Concrete Fields & Invariants
+    // ==========================================
 
     /*@ private invariant orderId > 0; @*/
-    private /*@ spec_public @*/ int orderId;
+    private int orderId;
 
-    //@ private invariant (\forall int i; 0 <= i < productsInOrder.length; \seq_get(productsInOrder, i) != null );
-    private /*@ spec_public @*/  List items;
+    /*@ private invariant items != null; @*/
+    private List items;
 
-    /*@ private normal_behavior
-       requires orderId > 0;
-       assignable this.orderId, this.items;
-       ensures this.orderId == orderId;
-       ensures productsInOrder == \seq_empty;
+
+    // ==========================================
+    // Constructor Specification
+    // ==========================================
+
+    /*@ public normal_behavior
+      @ requires orderId > 0;
+      @ assignable \nothing;
+      @ ensures productsInOrder == \seq_empty;
+      @ ensures id == orderId;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ requires orderId > 0;
+      @ assignable \nothing;
+      @ ensures this.orderId == orderId;
+      @ ensures this.items != null;
+      @ ensures productsInOrder == \seq_empty;
     */
+    //----------------------------------------------------------------
+
     public Order(int orderId) {
         this.orderId = orderId;
         this.items = new ArrayList();
     }
 
 
-    // TODO: specify with model fields
-
     /*@ public normal_behavior
-      @ assignable \strictly_nothing;
-      @ ensures \result != \seq_empty;
-    */
-    public boolean hasOrders() {
+      @ accessible footprint;
+      @ ensures \result == (productsInOrder.length > 0);
+      */
+    public boolean /*@ pure @*/ hasOrders() {
         return !items.isEmpty();
     }
 
@@ -49,9 +82,15 @@ public class Order {
 
     /*@ public normal_behavior
       @ requires p != null;
-      @ assignable items.content;
+      @ assignable footprint;
       @ ensures productsInOrder == \seq_concat(\old(productsInOrder), \seq_singleton(p));
-    @*/
+      @
+      @ also
+      @
+      @ public normal_behavior
+      @ requires p == null;
+      @ assignable \strictly_nothing;
+     */
     public void addItem(Product p) {
         if (p != null) {
             items.add(p);
@@ -59,10 +98,10 @@ public class Order {
     }
 
     /*@ public normal_behavior
-      @ ensures \result == orderId;
-      @ assignable \strictly_nothing;
+      @ accessible footprint;
+      @ ensures \result == getOrderId();
     @*/
-    public int getOrderId() {
+    public /*@ pure @*/ int getOrderId() {
         return orderId;
     }
 
@@ -71,10 +110,10 @@ public class Order {
      */
 
     /*@ public normal_behavior
+      @ accessible footprint;
       @ ensures \result == productsInOrder.length;
-      @ assignable \strictly_nothing;
     @*/
-    public int getQuantity() {
+    public /*@ pure @*/ int getQuantity() {
         return items.size();
     }
 
@@ -83,22 +122,18 @@ public class Order {
      */
 
     /*@ public normal_behavior
-      @  requires (0 <= index && index < productsInOrder.length);
-      @  ensures \result == \seq_get(productsInOrder, index);
-      @  assignable \strictly_nothing;
+      @ requires (0 <= index && index < productsInOrder.length);
+      @ accessible footprint;
+      @ ensures \result == \seq_get(productsInOrder, index);
+      @
       @ also
+      @
       @ public normal_behavior
-      @  requires (index < 0 || index >= productsInOrder.length);
-      @  ensures \result == null;
-      @  assignable \strictly_nothing;
-      @ also
-      @ public normal_behavior
-      @  requires (0 <= index && index < productsInOrder.length) ||  (index < 0 || index >= productsInOrder.length);
-      @  ensures \old((0 <= index && index < productsInOrder.length)) ==> \result == \seq_get(productsInOrder, index);
-      @  ensures \old((index < 0 || index >= productsInOrder.length)) ==>  \result == null;
-      @  assignable \strictly_nothing;
+      @ requires (index < 0 || index >= productsInOrder.length);
+      @ accessible footprint;
+      @ ensures \result == nulll;
       @*/
-    public /*@ nullable @*/ Product getItem(int index) {
+    public /*@ nullable pure @*/ Product getItem(int index) {
         if (index >= 0 && index < items.size()) {
             return (Product) items.get(index);
         }
@@ -110,11 +145,7 @@ public class Order {
      * This follows good encapsulation practices by preventing external modification.
      */
 
-   // TODO: Just Return the list itself Specification would be
-
-
      /*@ public normal_behavior
-       @  assignable \strictly_nothing;
        @  ensures \result != null;
        @  ensures \result.size() == productsInOrder.length;
        @  ensures (\forall int i; 0 <= i < productsInOrder.length; \result.get(i) == \seq_get(productsInOrder, i));
@@ -123,15 +154,15 @@ public class Order {
 
     public List getAllItems() {
         return null;
-                //Collections.unmodifiableList(items);
+        //Collections.unmodifiableList(items);
     }
 
-//------------------------------------------------------
+    //------------------------------------------------------
     /*@ public normal_behavior
-      @ assignable \strictly_nothing;
+      @ accessible footprint;
       @ ensures \result == (productsInOrder.length == 0);
     */
-    public boolean isEmpty() {
+    public /*@ pure @*/ boolean isEmpty() {
         return items.isEmpty();
     }
 
@@ -150,7 +181,7 @@ public class Order {
 
 
 
-
+//---------------------------
 
 
 
@@ -162,10 +193,10 @@ public class Order {
      * */
 
     /*@ public normal_behavior
-    @   requires (\forall int i; 0 <= i < productsInOrder.length; ((Product)\seq_get(productsInOrder, i)).getWeight() >= 0);
-    @   ensures \result == (\sum int i; 0 <= i && i < productsInOrder.length; ((Product)\seq_get(productsInOrder, i)).getWeight());
+      @ requires (\forall int i; 0 <= i < productsInOrder.length; ((Product)\seq_get(productsInOrder, i)).getWeight() >= 0);
+      @ ensures \result == (\sum int i; 0 <= i && i < productsInOrder.length; ((Product)\seq_get(productsInOrder, i)).getWeight());
     */
-    public int getTotalWeight() {
+    public /*@ pure @*/ int getTotalWeight() {
         int totalWeight = 0;
         for (int i = 0; i < items.size(); i++) {
             Product product = (Product) items.get(i);
@@ -176,16 +207,16 @@ public class Order {
         return totalWeight;
     }
 
-   //  @Override
+    //  @Override
     public String toString() {
         return "Order[id=" + orderId + ", quantity=" + items.size() + ", totalWeight=" + getTotalWeight() + "kg]";
     }
 
 
     /**
-    public int getTotalWeight() {
-        return items.stream()
-                .mapToInt(Product::getWeight)
-                .sum();
-    } */
+     public int getTotalWeight() {
+     return items.stream()
+     .mapToInt(Product::getWeight)
+     .sum();
+     } */
 }

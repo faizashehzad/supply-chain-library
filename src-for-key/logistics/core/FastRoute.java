@@ -7,10 +7,10 @@ import logistics.model.Location;
  // A route strategy that prioritizes speed.
 public class FastRoute implements RouteStrategy {
 
-     /*@ public invariant routeNetwork != null; @*/
+
     private /*@ spec_public @*/ final RouteNetwork routeNetwork;
 
-     /*@ public normal_behavior
+    /*@ public normal_behavior
       @ requires routeNetwork != null;
       @ assignable \nothing;
       @ ensures this.routeNetwork == routeNetwork;
@@ -22,8 +22,8 @@ public class FastRoute implements RouteStrategy {
       @ assignable \nothing;
       @ signals_only IllegalArgumentException;
       @ signals (IllegalArgumentException e) true;
-      @*/
-    public FastRoute(RouteNetwork routeNetwork) {
+      */
+    public FastRoute( /*@ nullable @*/ RouteNetwork routeNetwork) {
         if (routeNetwork == null) {
             throw new IllegalArgumentException("RouteNetwork cannot be null for FastRoute strategy.");
         }
@@ -40,7 +40,9 @@ public class FastRoute implements RouteStrategy {
        @ public normal_behavior
        @ requires s != null;
        @ ensures \result > 0;
-       @*/
+       @ // ensures s.getOrder() != null ==> \result == (int) Math.round((s.getOrder().getTotalWeight() * 2) + (routeNetwork.getDistance(s.getOrigin().getPostcode(), s.getDestination().getPostcode()) * 0.001));
+       @ // ensures s.getOrder() == null ==> \result == (int) Math.round(routeNetwork.getDistance(s.getOrigin().getPostcode(), s.getDestination().getPostcode()) * 0.001);
+       */
 
     @Override
     public /*@ pure @*/ int calculateRoute(/*@ nullable @*/ Shipment s) {
