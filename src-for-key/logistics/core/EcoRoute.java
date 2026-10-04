@@ -22,7 +22,7 @@ public class EcoRoute implements RouteStrategy {
       @ assignable \nothing;
       @ signals_only IllegalArgumentException;
       @ signals (IllegalArgumentException e) true;
-      @*/
+      */
 
     public EcoRoute(/*@ nullable @*/ RouteNetwork routeNetwork) {
         if (routeNetwork == null) {
@@ -42,10 +42,12 @@ public class EcoRoute implements RouteStrategy {
       @ requires s != null;
       @ assignable \strictly_nothing;
       @ ensures \result >= 0;
-      @*/
+      @ // ensures s.getOrder() != null ==> \result == (int) (s.getOrder().getTotalWeight() * 2) + (routeNetwork.getDistance(s.getOrigin().getPostcode(), s.getDestination().getPostcode())/1000);
+      @ // ensures s.getOrder() == null ==> \result == (int) routeNetwork.getDistance(s.getOrigin().getPostcode(), s.getDestination().getPostcode())/1000;
+      */
 
     @Override
-    public int calculateRoute(/*@ nullable @*/ Shipment s) {
+    public int calculateRoute(/*@ nullable @*/ Shipment s) { //TODO: fix the name of the
         if (s == null) {
             return 0;
         }
@@ -67,6 +69,6 @@ public class EcoRoute implements RouteStrategy {
         // Using a factor of 0.0005, making it cheaper than FastRoute's factor.
         double cost = (totalWeight * 1) + (distance * 0.0005);
         
-        return (int) Math.round(cost);
+        return (int) Math.round(cost); //avoid double and make it int or long
     }
 }
