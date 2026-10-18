@@ -7,62 +7,69 @@ public interface Collection extends java.lang.Iterable
 {
 
     // imagine like a integer
-   /*@ public ghost instance \seq content; @*/
+    /*@ public ghost instance \seq content; @*/
 
-   /*@ public normal_behavior
-     @ ensures \result == content.length;
-     @ assignable \strictly_nothing;
-    */
-   public int size();
+    //@ public model instance \locset footprint;
+    //@ accessible footprint: footprint;
+    //@ accessible \inv: footprint;
 
-   /*@ public normal_behavior
-     @ ensures \result == (content.length == 0);
-     @ assignable \strictly_nothing;
+    //@ public instance invariant \subset(\singleton(this.content),footprint);
+
+    /*@ public normal_behavior
+      @ ensures \result == content.length;
+      @ assignable \strictly_nothing;
+      @ accessible footprint;
      */
-   boolean isEmpty();
+    public int size();
+
+    /*@ public normal_behavior
+      @ ensures \result == (content.length == 0);
+      @ assignable \strictly_nothing;
+      */
+    boolean isEmpty();
 
 
- /*@ public normal_behavior
-   @   requires var1 != null;
-   @   ensures content == \seq_concat(\old(content), \seq_singleton(var1));
-   @   ensures \result == true;
-   @   assignable content;
-   @ also
-   @ public exceptional_behavior
-   @   requires var1 == null;
-   @   signals_only NullPointerException;
-   @   signals (NullPointerException e) true;
-   @   assignable \nothing;
-   @*/
-   boolean add(/*@ nullable @*/ java.lang.Object var1);
+    /*@ public normal_behavior
+      @   requires var1 != null;
+      @   ensures content == \seq_concat(\old(content), \seq_singleton(var1));
+      @   ensures \result == true;
+      @   assignable content;
+      @ also
+      @ public exceptional_behavior
+      @   requires var1 == null;
+      @   signals_only NullPointerException;
+      @   signals (NullPointerException e) true;
+      @   assignable \nothing;
+      @*/
+    boolean add(/*@ nullable @*/ java.lang.Object var1);
 
 
-   public boolean remove(java.lang.Object arg0);
-   
-   /*@ public normal_behavior
-     @ ensures content == \seq_concat(\old(content), arg0.content);
-     @ assignable content;
-     @*/
-   public boolean addAll(java.util.Collection arg0);
-   public boolean removeAll(java.util.Collection arg0);
-   public boolean retainAll(java.util.Collection arg0);
-   public void clear();
+    public boolean remove(java.lang.Object arg0);
 
-   /*@ public normal_behavior
-     @ requires var1 != null;
-     @ ensures \result == (\exists int i; 0 <= i < content.length; ((java.lang.Object)\seq_get(content, i)).equals(var1));
-     @ assignable \strictly_nothing;
-     @ also
-     @ public exceptional_behavior
-     @   requires var1 == null;
-     @   signals_only NullPointerException;
-     @   signals (NullPointerException e) true;
-    */
-   boolean contains(java.lang.Object var1);
-   public boolean containsAll(java.util.Collection arg0);
-   
-   public java.util.Iterator iterator();
-   
-   public java.lang.Object[] toArray();
-   public java.lang.Object[] toArray(java.lang.Object[] arg0);
+    /*@ public normal_behavior
+      @ ensures content == \seq_concat(\old(content), arg0.content);
+      @ assignable content;
+      @*/
+    public boolean addAll(java.util.Collection arg0);
+    public boolean removeAll(java.util.Collection arg0);
+    public boolean retainAll(java.util.Collection arg0);
+    public void clear();
+
+    /*@ public normal_behavior
+      @ requires var1 != null;
+      @ ensures \result == (\exists int i; 0 <= i < content.length; ((java.lang.Object)\seq_get(content, i)).equals(var1));
+      @ assignable \strictly_nothing;
+      @ also
+      @ public exceptional_behavior
+      @   requires var1 == null;
+      @   signals_only NullPointerException;
+      @   signals (NullPointerException e) true;
+     */
+    boolean contains(java.lang.Object var1);
+    public boolean containsAll(java.util.Collection arg0);
+
+    public java.util.Iterator iterator();
+
+    public java.lang.Object[] toArray();
+    public java.lang.Object[] toArray(java.lang.Object[] arg0);
 }

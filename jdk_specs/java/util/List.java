@@ -3,18 +3,18 @@ package java.util;
 // can i remove SequesnceCollection<E>
 // for the moment comment out supertypes like SequencedColl, Iterable, Collection
 public interface List extends java.util.Collection {
-    //public interface List extends SequencedCollection {
+ //public interface List extends SequencedCollection {
 
-    // use ghost for now
+ // use ghost for now
 
 
-    // if there are properties
+ // if there are properties
 
 
 // ------------------
 //--------------------
 
-/*Added Index Out of Bound check with prof */
+ /*Added Index Out of Bound check with prof */
 
     /* public normal_behavior
        requires 0 <= var1 && var1 < content.length;
@@ -28,21 +28,21 @@ public interface List extends java.util.Collection {
          signals (IndexOutOfBoundsException e) true;
      */
 
-   // add index out b exc
-    java.lang.Object get(int var1);
+ // add index out b exc
+ java.lang.Object get(int var1);
 
 
-    java.util.Iterator iterator();
+ java.util.Iterator iterator();
 
-    boolean contains(java.lang.Object var1);
+ boolean contains(java.lang.Object var1);
 
-    java.lang.Object[] toArray();
+ java.lang.Object[] toArray();
 
-    boolean remove(java.lang.Object var1);
+ boolean remove(java.lang.Object var1);
 
-    boolean containsAll(java.util.Collection var1);
+ boolean containsAll(java.util.Collection var1);
 
-    boolean addAll(java.util.Collection var1);
+ boolean addAll(java.util.Collection var1);
 /*
     boolean addAll(int var1, java.util.Collection<? extends E> var2);
 
