@@ -4,10 +4,10 @@ import logistics.model.Shipment;
 import logistics.model.Order;
 import logistics.model.Location;
 
- // A route strategy that prioritizes economy.
+// A route strategy that prioritizes economy.
 public class EcoRoute implements RouteStrategy {
 
-     /*@ public invariant routeNetwork != null; @*/
+    /*@ public invariant routeNetwork != null; @*/
     private /*@ spec_public @*/ final RouteNetwork routeNetwork;
 
     /*@ public normal_behavior
@@ -33,7 +33,7 @@ public class EcoRoute implements RouteStrategy {
 //TODO: At some point need to (get Distance if a query method then can be directly specified )
     /*@ public normal_behavior
       @ requires s == null;
-      @ assignable \strictly_nothing;
+      @ assignable \nothing;
       @ ensures \result == 0;
       @
       @ also
@@ -68,7 +68,7 @@ public class EcoRoute implements RouteStrategy {
         // Cost = (Total Weight * 1) + (Distance * a factor)
         // Using a factor of 0.0005, making it cheaper than FastRoute's factor.
         double cost = (totalWeight * 1) + (distance * 0.0005);
-        
+
         return (int) Math.round(cost); //avoid double and make it int or long
     }
 }

@@ -167,7 +167,8 @@ public class RouteNetwork {
     }
 
    /*@ private normal_behavior
-     @ assignable \strictly_nothing;
+     @ assignable \nothing;
+     @ @ accessible postcodeFootprint;
      @ ensures (\result == -1) ==> (\forall int i; 0 <= i && i < getPostcodeCount(); postcodes[i] != postcode);
      @ ensures (\result != -1) ==> (0 <= \result && \result < getPostcodeCount() && postcodes[\result] == postcode);
      */
@@ -210,22 +211,22 @@ public class RouteNetwork {
         distanceMatrix[originIdx][destIdx] = distance;
     }
 
-   /*@ public normal_behavior
-     @ requires distance >= 0;
-     @ assignable footprint;
-     @ ensures getDistance(postcode1, postcode2) == (postcode1 == postcode2 ? 0L : distance);
-     @ ensures getDistance(postcode2, postcode1) == (postcode1 == postcode2 ? 0L : distance);
-     @ ensures (\forall int p1, p2;
-     @          ((p1 != postcode1 || p2 != postcode2) && (p1 != postcode2 || p2 != postcode1)) ==>
-     @          getDistance(p1, p2) == \old(getDistance(p1, p2))); 
-     @
-     @ also
-     @
-     @ public exceptional_behavior
-     @ requires distance < 0;
-     @ assignable \nothing;
-     @ signals (IllegalArgumentException) true;
-     */
+    /*@ public normal_behavior
+      @ requires distance >= 0;
+      @ assignable footprint;
+      @ ensures getDistance(postcode1, postcode2) == (postcode1 == postcode2 ? 0L : distance);
+      @ ensures getDistance(postcode2, postcode1) == (postcode1 == postcode2 ? 0L : distance);
+      @ ensures (\forall int p1, p2;
+      @          ((p1 != postcode1 || p2 != postcode2) && (p1 != postcode2 || p2 != postcode1)) ==>
+      @          getDistance(p1, p2) == \old(getDistance(p1, p2)));
+      @
+      @ also
+      @
+      @ public exceptional_behavior
+      @ requires distance < 0;
+      @ assignable \nothing;
+      @ signals (IllegalArgumentException) true;
+      */
     public void addDistance(int postcode1, int postcode2, long distance) {
         if (distance < 0) {
             throw new IllegalArgumentException("Distance must be non-negative.");
@@ -245,6 +246,7 @@ public class RouteNetwork {
 
     /*@ public normal_behavior
       @ requires true;
+      @ accessible footprint;
       @ ensures originPostcode == destPostcode ==> \result == 0L;
       @ ensures (!(\exists int i; 0 <= i < getPostcodeCount(); postcodes[i] == originPostcode) || !(\exists int j; 0 <= j && j < getPostcodeCount(); postcodes[j] == destPostcode)) ==> \result == 0L;
       @ ensures (\forall int src, dst; 0 <= src < getPostcodeCount() && 0 <= dst < getPostcodeCount(); (postcodes[src] == originPostcode && postcodes[dst] == destPostcode && originPostcode != destPostcode) ==> \result == distanceMatrix[src][dst]);
@@ -264,6 +266,7 @@ public class RouteNetwork {
     }
 
     /*@ public normal_behavior
+      @ accessible postcodeFootprint;
       @ ensures \result == postcodeCount;
      */
     public /*@ pure @*/ int getPostcodeCount() {

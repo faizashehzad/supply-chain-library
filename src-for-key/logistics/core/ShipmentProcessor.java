@@ -24,7 +24,7 @@ public class ShipmentProcessor {
      * 3. Notifies the warehouse observers.
      * Does nothing if shipment or warehouse is null.
      */
-    
+
     //TODO:Specify notify Observer part is still open have to think about observer pattern specification slides 5.2
     
     /*@ public  normal_behavior
@@ -55,7 +55,7 @@ public class ShipmentProcessor {
         }
         int routeCost = strategy.calculateRoute(s);
         // Use the Shipment's own state transition method
-        s.markInTransit(); 
+        s.markInTransit();
         w.notifyObservers(s);
         return routeCost;
     }

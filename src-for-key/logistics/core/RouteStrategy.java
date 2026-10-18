@@ -29,6 +29,7 @@ public interface RouteStrategy {
        @
        @ public normal_behavior
        @ requires s != null;
+       @ accessible footprint , s.*;
        @ ensures \result >= 0;
        @ assignable \nothing; // Concrete Strategy refine frame conditions
       */

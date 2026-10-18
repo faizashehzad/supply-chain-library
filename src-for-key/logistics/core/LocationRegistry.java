@@ -100,9 +100,10 @@ public class LocationRegistry {
      * Helper to find the array index of a postcode. Returns -1 if not registered.
      */
     /*@ private normal_behavior
+      @ accessible footprint;
       @ ensures (\result == -1) ==> (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != postcode);
       @ ensures (\result != -1) ==> (0 <= \result && \result < locationCount && locations[\result].getPostcode() == postcode);
-      @ assignable \strictly_nothing;
+      @ assignable \nothing;
     */
 
     private /*@ pure @*/ int getIndexByPostcode(int postcode) {
@@ -165,8 +166,9 @@ public class LocationRegistry {
     }
 
     /*@ public normal_behavior
+      @ accessible footprint;
       @ ensures \result != null ==> \result.getPostcode() == postcode;
-      @ ensures \result == null ==> (\forall int i; 0 <= i && i < locationCount; locations[i].getPostcode() != postcode);
+      @ ensures \result == null ==> (\forall int i; 0 <= i && i < locationsInRegistry.length; ((Location)\seq_get(locationsInRegistry, i)).getPostcode() != postcode);
     */
     public /*@ nullable pure @*/ Location getLocationByPostcode(int postcode) {
         int idx = getIndexByPostcode(postcode);
@@ -182,6 +184,7 @@ public class LocationRegistry {
      * This mimics the safety of "unmodifiableList" by returning a copy.
      */
     /*@ public normal_behavior
+      @ accessible footprint;
       @ ensures \result.length == locationCount;
       @ ensures (\forall int i; 0 <= i && i < locationCount; \result[i] == locations[i]);
       @ ensures \fresh(\result);
@@ -194,6 +197,7 @@ public class LocationRegistry {
         return copy;
     }
     /*@ public normal_behavior
+      @ accessible footprint;
       @ ensures \result == locationCount;
       */
     public /*@ pure @*/ int getLocationCount() {

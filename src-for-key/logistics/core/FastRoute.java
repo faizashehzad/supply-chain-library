@@ -4,7 +4,7 @@ import logistics.model.Shipment;
 import logistics.model.Order;
 import logistics.model.Location;
 
- // A route strategy that prioritizes speed.
+// A route strategy that prioritizes speed.
 public class FastRoute implements RouteStrategy {
 
 
@@ -32,7 +32,7 @@ public class FastRoute implements RouteStrategy {
 
      /*@ public normal_behavior
        @ requires s == null;
-       @ assignable \strictly_nothing;
+       @ assignable \nothing;
        @ ensures \result == 0;
        @
        @ also
@@ -67,7 +67,7 @@ public class FastRoute implements RouteStrategy {
         // Using a factor of 0.001 to convert abstract long distance units to a reasonable cost component.
         // The result is cast to int as per the interface.
         double cost = (totalWeight * 2) + (distance * 0.001);
-        
+
         return (int) Math.round(cost);
     }
 }
