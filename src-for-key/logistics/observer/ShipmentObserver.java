@@ -14,9 +14,9 @@ public interface ShipmentObserver {
     /**
      * Called by Warehouse whenever a shipment status changes.
      */
-     // Abstract instance model location set for the dynamic frame of the observer
-    
-     //@ public instance model \locset footprint;
+    // Abstract instance model location set for the dynamic frame of the observer
+
+    //@ public instance model \locset footprint;
 
 
     /*@ public normal_behavior

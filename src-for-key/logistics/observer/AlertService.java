@@ -51,16 +51,18 @@ public class AlertService implements ShipmentObserver {
         alertCount++;
         lastAlertedShipment = s;
         System.out.println("[ALERT] Status update for Shipment "
-                          + s.getShipmentId()
-                          + " -> " + s.statusLabel());
+                + s.getShipmentId()
+                + " -> " + s.statusLabel());
     }
-      /*@ public normal_behavior //TODO: private specification
-        @ ensures \result == alertCount;
-       */
+    /*@ public normal_behavior //TODO: private specification
+      @ accessible footprint;
+      @ ensures \result == alertCount;
+     */
     public /*@ pure @*/ int getAlertCount() {
         return alertCount;
     }
     /*@ public normal_behavior
+      @ accessible footprint;
       @ ensures \result == lastAlertedShipment;
       */
     public /*@ pure @*/ Shipment getLastAlertedShipment() {

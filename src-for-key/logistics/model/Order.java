@@ -14,15 +14,15 @@ public class Order {
     // Public Model Fields
     // ==========================================
     //@ public model \seq productsInOrder;
-    //@ public model int id;
+    //@ public model int id; //TODO: Model field can be removed
     //@ public model \locset footprint;
-
+    //@ public accessible \inv: footprint;   //TODO: Verify with prof
     // ==========================================
     // Private Represents (Model-to-Concrete Mapping)
     // ==========================================
     //@ private represents id = orderId;
     //@ private represents productsInOrder = items.content;
-    //@ private represents footprint = \set_union(\singleton(this.orderId), \set_union(\singleton(this.items), items.content));
+    //@ private represents footprint = \set_union(\singleton(this.orderId), \set_union(\singleton(this.items), items.footprint));
     // ==========================================
     // Public Invariants (Visible to Callers)
     // ==========================================
@@ -36,7 +36,6 @@ public class Order {
     /*@ private invariant orderId > 0; @*/
     private int orderId;
 
-    /*@ private invariant items != null; @*/
     private List items;
 
 
@@ -70,8 +69,15 @@ public class Order {
     /*@ public normal_behavior
       @ accessible footprint;
       @ ensures \result == (productsInOrder.length > 0);
-      */
-    public boolean /*@ pure @*/ hasOrders() {
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.items), items.content;
+      @ ensures \result == (!items.isEmpty());
+    */
+
+    public /*@ pure @*/ boolean hasOrders() {
         return !items.isEmpty();
     }
 
@@ -91,7 +97,7 @@ public class Order {
       @ requires p == null;
       @ assignable \strictly_nothing;
      */
-    public void addItem(Product p) {
+    public void addItem(/*@ nullable @*/Product p) {
         if (p != null) {
             items.add(p);
         }
@@ -100,8 +106,14 @@ public class Order {
     /*@ public normal_behavior
       @ accessible footprint;
       @ ensures \result == getOrderId();
-    @*/
-    public /*@ pure @*/ int getOrderId() {
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.orderId);
+      @ ensures \result == this.orderId;
+      @*/
+    public /*@ strictly_pure @*/ int getOrderId() {
         return orderId;
     }
 
@@ -112,6 +124,12 @@ public class Order {
     /*@ public normal_behavior
       @ accessible footprint;
       @ ensures \result == productsInOrder.length;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.items), items.footprint;
+      @ ensures \result == items.size();
     @*/
     public /*@ pure @*/ int getQuantity() {
         return items.size();
@@ -131,7 +149,21 @@ public class Order {
       @ public normal_behavior
       @ requires (index < 0 || index >= productsInOrder.length);
       @ accessible footprint;
-      @ ensures \result == nulll;
+      @ ensures \result == null;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ requires 0 <= index && index < items.content.length;
+      @ accessible \singleton(this.items), items.footprint;
+      @ ensures \result == (Product) items.get(index);
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ requires index < 0 || index >= items.content.length;
+      @ accessible \singleton(this.items), items.footprint;
+      @ ensures \result == null;
       @*/
     public /*@ nullable pure @*/ Product getItem(int index) {
         if (index >= 0 && index < items.size()) {
@@ -146,13 +178,23 @@ public class Order {
      */
 
      /*@ public normal_behavior
-       @  ensures \result != null;
-       @  ensures \result.size() == productsInOrder.length;
-       @  ensures (\forall int i; 0 <= i < productsInOrder.length; \result.get(i) == \seq_get(productsInOrder, i));
+       @ accessible footprint;
+       @ ensures \result != null;
+       @ ensures \result.size() == productsInOrder.length;
+       @ ensures (\forall int i; 0 <= i < productsInOrder.length; \result.get(i) == \seq_get(productsInOrder, i));
        @  ensures \fresh(\result);
+       @
+       @ also
+       @
+       @ private normal_behavior
+       @ accessible \singleton(this.items), items.footprint;
+       @ ensures \result != null;
+       @ ensures \result.size() == items.size();
+       @ ensures (\forall int i; 0 <= i < items.size(); \result.get(i) == (Product) items.get(i));
+       @ ensures \fresh(\result);
       @*/
 
-    public List getAllItems() {
+    public /*@ pure @*/ List getAllItems() {
         return null;
         //Collections.unmodifiableList(items);
     }
@@ -161,6 +203,12 @@ public class Order {
     /*@ public normal_behavior
       @ accessible footprint;
       @ ensures \result == (productsInOrder.length == 0);
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.items), items.content;
+      @ ensures \result == items.isEmpty();
     */
     public /*@ pure @*/ boolean isEmpty() {
         return items.isEmpty();
@@ -193,8 +241,15 @@ public class Order {
      * */
 
     /*@ public normal_behavior
+      @ accessible footprint;
       @ requires (\forall int i; 0 <= i < productsInOrder.length; ((Product)\seq_get(productsInOrder, i)).getWeight() >= 0);
       @ ensures \result == (\sum int i; 0 <= i && i < productsInOrder.length; ((Product)\seq_get(productsInOrder, i)).getWeight());
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.items), items.content;
+      @ ensures \result == (items.isEmpty() ? 0 : (\sum int i; 0 <= i && i < items.size(); ((Product)items.get(i)).getWeight()));
     */
     public /*@ pure @*/ int getTotalWeight() {
         int totalWeight = 0;

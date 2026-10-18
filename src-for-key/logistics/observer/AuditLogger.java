@@ -45,11 +45,12 @@ public class AuditLogger implements ShipmentObserver {
         }
         logCount++;
         lastLogEntry = "[AUDIT] Shipment " + s.getShipmentId()
-                     + " changed to " + s.statusLabel();
+                + " changed to " + s.statusLabel();
         System.out.println(lastLogEntry);
     }
 
     /*@ public normal_behavior
+      @ accessible footprint;
       @ ensures \result == logCount;
      */
     public /*@ pure @*/ int getLogCount() {
@@ -57,6 +58,7 @@ public class AuditLogger implements ShipmentObserver {
     }
 
     /*@ public normal_behavior
+      @ accessible footprint;
       @ ensures \result == lastLogEntry;
      */
     public /*@ pure @*/ String getLastLogEntry() {

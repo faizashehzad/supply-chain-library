@@ -30,8 +30,8 @@ public class Shipment {
       @ assignable \nothing;
       @ ensures this.getShipmentId() == shipmentId;
       @ ensures this.getStatus() == PENDING; 
-      @ ensures this.getorigin().equals(origin);
-      @ ensures this.getdestination().equals(destination);
+      @ ensures this.getOrigin().equals(origin);
+      @ ensures this.getDestination().equals(destination);
       @ ensures this.getOrder() == order;
       @
       @ also
@@ -57,14 +57,28 @@ public class Shipment {
     }
 
     /*@ public normal_behavior
-       @ ensures \result == shipmentId;
+      @ accessible this.*;
+      @ ensures \result == shipmentId;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.shipmentId);
+      @ ensures \result == this.shipmentId;
      */
     public /*@ pure @*/ int getShipmentId() {
         return shipmentId;
     }
 
     /*@ public normal_behavior
-       @ ensures \result == status; 
+      @ accessible this.*;
+      @ ensures \result == status;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.status);
+      @ ensures \result == this.status;
      */
     public /*@ pure @*/ int getStatus() {
         return status;
@@ -127,7 +141,7 @@ public class Shipment {
       @ signals_only IllegalArgumentException;
       @ signals (IllegalArgumentException e) true;
     */
-     public void updateStatus(int newStatus) {
+    public void updateStatus(int newStatus) {
         if (newStatus == PENDING || newStatus == IN_TRANSIT || newStatus == DELIVERED) {
             this.status = newStatus;
         } else {
@@ -136,33 +150,62 @@ public class Shipment {
     }
 
     /*@ public normal_behavior
-      @ ensures \result == origin;
+      @ accessible this.*;
+      @ ensures \result != null;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.origin);
+      @ ensures \result == this.origin;
     */
     public /*@ pure @*/ Location getOrigin() {
         return origin;
     }
 
     /*@ public normal_behavior
-      @ ensures \result == destination;
+      @ accessible this.*;
+      @ ensures \result != null;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.destination);
+      @ ensures \result == this.destination;
       */
     public /*@ pure @*/ Location getDestination() {
         return destination;
     }
 
     /*@ public normal_behavior
-      @ ensures \result == order;
+      @ accessible this.*;
+      @ ensures \result != null;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.order);
+      @ ensures \result == this.order;
     */
     public /*@ pure @*/ Order getOrder() {
         return order;
     }
 
     /*@ public normal_behavior
-      @ assignable \strictly_nothing;
+      @ accessible this.*;
       @ ensures status == PENDING    ==> \result.equals("PENDING");
       @ ensures status == IN_TRANSIT ==> \result.equals("IN_TRANSIT");
       @ ensures status == DELIVERED  ==> \result.equals("DELIVERED");
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.status);
+      @ ensures this.status == PENDING    ==> \result.equals("PENDING");
+      @ ensures this.status == IN_TRANSIT ==> \result.equals("IN_TRANSIT");
+      @ ensures this.status == DELIVERED  ==> \result.equals("DELIVERED");
     */
-    public String statusLabel() {
+    public /*@ pure @*/ String statusLabel() {
         if (status == PENDING)    return "PENDING";
         if (status == IN_TRANSIT) return "IN_TRANSIT";
         if (status == DELIVERED)  return "DELIVERED";
@@ -172,8 +215,8 @@ public class Shipment {
     @Override
     public String toString() {
         return "Shipment[id=" + shipmentId
-             + ", status=" + statusLabel()
-             + ", from=" + origin.getName() + " (" + origin.getPostcode() + ")"
-             + ", to=" + destination.getName() + " (" + destination.getPostcode() + ")" + "]";
+                + ", status=" + statusLabel()
+                + ", from=" + origin.getName() + " (" + origin.getPostcode() + ")"
+                + ", to=" + destination.getName() + " (" + destination.getPostcode() + ")" + "]";
     }
 }

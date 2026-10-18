@@ -30,8 +30,14 @@ public class Product {
     }
 
     /*@ public normal_behavior
-      @ ensures \result == getId(); //private
       @ accessible this.*;
+      @ ensures \result == getId(); //private
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.id);
+      @ ensures \result == this.id;
      */
 
     public /*@ pure @*/ int getId() {
@@ -39,7 +45,14 @@ public class Product {
     }
 
     /*@ public normal_behavior
-      @ ensures \result.equals(name);
+      @ accessible this.*;
+      @ ensures \result.length() > 0;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.name);
+      @ ensures \result == this.name;
      */
 
     public /*@ pure @*/ String getName() {
@@ -47,7 +60,14 @@ public class Product {
     }
 
     /*@ public normal_behavior
-      @ ensures \result == weight;
+      @ accessible this.*;
+      @ ensures \result > 0;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.weight);
+      @ ensures \result == this.weight;
      */
 
     public /*@ pure @*/ int getWeight() {
