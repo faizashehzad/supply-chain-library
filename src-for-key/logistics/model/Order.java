@@ -14,19 +14,17 @@ public class Order {
     // Public Model Fields
     // ==========================================
     //@ public model \seq productsInOrder;
-    //@ public model int id; //TODO: Model field can be removed
     //@ public model \locset footprint;
-    //@ public accessible \inv: footprint;   //TODO: Verify with prof
+    //@ public accessible \inv: footprint;
     // ==========================================
     // Private Represents (Model-to-Concrete Mapping)
     // ==========================================
-    //@ private represents id = orderId;
     //@ private represents productsInOrder = items.content;
     //@ private represents footprint = \set_union(\singleton(this.orderId), \set_union(\singleton(this.items), items.footprint));
     // ==========================================
     // Public Invariants (Visible to Callers)
     // ==========================================
-    //@ public invariant id > 0;
+    //@ public invariant getOrderId() > 0;
     //@ public invariant (\forall int i; 0 <= i < productsInOrder.length; \seq_get(productsInOrder, i) != null);
 
     // ==========================================
@@ -47,7 +45,7 @@ public class Order {
       @ requires orderId > 0;
       @ assignable \nothing;
       @ ensures productsInOrder == \seq_empty;
-      @ ensures id == orderId;
+      @ ensures this.getOrderId() == orderId;
       @
       @ also
       @

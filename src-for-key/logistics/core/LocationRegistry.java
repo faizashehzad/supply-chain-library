@@ -33,10 +33,10 @@ public class LocationRegistry {
     // Private Concrete Fields & Invariants
     // ==========================================
 
-    // private invariant locations != null; @*/
-    // private invariant locationCount >= 0 && locationCount <= locations.length; @*/
-    // private invariant (\forall int i; 0 <= i && i < locationCount; locations[i] != null); @*/
-    // private invariant (\forall int i, j; 0 <= i && i < locationCount && 0 <= j && j < locationCount && i != j; locations[i].getPostcode() != locations[j].getPostcode()); @*/ // same as above
+    // private invariant locations != null;
+    // private invariant locationCount >= 0 && locationCount <= locations.length;
+    // private invariant (\forall int i; 0 <= i && i < locationCount; locations[i] != null);
+    // private invariant (\forall int i, j; 0 <= i && i < locationCount && 0 <= j && j < locationCount && i != j; locations[i].getPostcode() != locations[j].getPostcode());  // same as above
 
     // Flat array to store the Location objects: After the array initlaization since
     // its reference type is array its entries are null by default
@@ -168,7 +168,14 @@ public class LocationRegistry {
     /*@ public normal_behavior
       @ accessible footprint;
       @ ensures \result != null ==> \result.getPostcode() == postcode;
-      @ ensures \result == null ==> (\forall int i; 0 <= i && i < locationsInRegistry.length; ((Location)\seq_get(locationsInRegistry, i)).getPostcode() != postcode);
+      @ ensures \result == null ==> (\forall int i; 0 <= i < locationsInRegistry.length; ((Location)\seq_get(locationsInRegistry, i)).getPostcode() != postcode);
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.locations), \singleton(this.locationCount), locations[*];
+      @ ensures \result == null ==> (getIndexByPostcode(postcode) == -1);
+      @ ensures \result != null ==> \result == locations[getIndexByPostcode(postcode)];
     */
     public /*@ nullable pure @*/ Location getLocationByPostcode(int postcode) {
         int idx = getIndexByPostcode(postcode);
@@ -185,8 +192,15 @@ public class LocationRegistry {
      */
     /*@ public normal_behavior
       @ accessible footprint;
-      @ ensures \result.length == locationCount;
-      @ ensures (\forall int i; 0 <= i && i < locationCount; \result[i] == locations[i]);
+      @ ensures \result.length == locationsInRegistry.length;
+      @ ensures (\forall int i; 0 <= i < locationsInRegistry.length; \result[i] == (Location)\seq_get(locationsInRegistry, i));
+      @ ensures \fresh(\result);
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.locations), \singleton(this.locationCount), locations[*];
+      @ ensures \result.length == this.locationCount;
+      @ ensures (\forall int i; 0 <= i < this.locationCount; \result[i] == this.locations[i]);
       @ ensures \fresh(\result);
      */
     public /*@ pure @*/ Location[] getAllLocations() {
@@ -198,7 +212,13 @@ public class LocationRegistry {
     }
     /*@ public normal_behavior
       @ accessible footprint;
-      @ ensures \result == locationCount;
+      @ ensures \result >= 0;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.locationCount);
+      @ ensures \result == this.locationCount;
       */
     public /*@ pure @*/ int getLocationCount() {
         return locationCount;

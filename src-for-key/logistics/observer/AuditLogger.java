@@ -51,7 +51,13 @@ public class AuditLogger implements ShipmentObserver {
 
     /*@ public normal_behavior
       @ accessible footprint;
-      @ ensures \result == logCount;
+      @ ensures \result >= 0;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.logCount);
+      @ ensures \result == this.logCount;
      */
     public /*@ pure @*/ int getLogCount() {
         return logCount;
@@ -59,7 +65,13 @@ public class AuditLogger implements ShipmentObserver {
 
     /*@ public normal_behavior
       @ accessible footprint;
-      @ ensures \result == lastLogEntry;
+      @ ensures \result != null;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.lastLogEntry);
+      @ ensures \result == this.lastLogEntry;
      */
     public /*@ pure @*/ String getLastLogEntry() {
         return lastLogEntry;

@@ -168,7 +168,7 @@ public class RouteNetwork {
 
    /*@ private normal_behavior
      @ assignable \nothing;
-     @ @ accessible postcodeFootprint;
+     @ accessible postcodeFootprint;
      @ ensures (\result == -1) ==> (\forall int i; 0 <= i && i < getPostcodeCount(); postcodes[i] != postcode);
      @ ensures (\result != -1) ==> (0 <= \result && \result < getPostcodeCount() && postcodes[\result] == postcode);
      */
@@ -248,8 +248,16 @@ public class RouteNetwork {
       @ requires true;
       @ accessible footprint;
       @ ensures originPostcode == destPostcode ==> \result == 0L;
-      @ ensures (!(\exists int i; 0 <= i < getPostcodeCount(); postcodes[i] == originPostcode) || !(\exists int j; 0 <= j && j < getPostcodeCount(); postcodes[j] == destPostcode)) ==> \result == 0L;
-      @ ensures (\forall int src, dst; 0 <= src < getPostcodeCount() && 0 <= dst < getPostcodeCount(); (postcodes[src] == originPostcode && postcodes[dst] == destPostcode && originPostcode != destPostcode) ==> \result == distanceMatrix[src][dst]);
+      @ ensures (!(\exists int i; 0 <= i < getPostcodeCount(); (int)\seq_get(registeredPostcodes, i) == originPostcode) || !(\exists int j; 0 <= j && j < getPostcodeCount(); (int)\seq_get(registeredPostcodes, j) == destPostcode)) ==> \result == 0L;
+      @ ensures (\forall int src, dst; 0 <= src < getPostcodeCount() && 0 <= dst < getPostcodeCount(); ((int)\seq_get(registeredPostcodes, src) == originPostcode && (int)\seq_get(registeredPostcodes, dst) == destPostcode && originPostcode != destPostcode) ==> \result == distanceMatrix[src][dst]); //still distance matrix is not specified
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.postcodes), \singleton(this.postcodeCount),\singleton(this.distanceMatrix), postcodes[*], distanceMatrix[*];
+      @ ensures originPostcode == destPostcode ==> \result == 0L;
+      @ ensures (getPostcodeIndex(originPostcode) == -1 || getPostcodeIndex(destPostcode) == -1) ==> \result == 0L;
+      @ ensures (getPostcodeIndex(originPostcode) != -1 && getPostcodeIndex(destPostcode) != -1 && originPostcode != destPostcode) ==> \result == distanceMatrix[getPostcodeIndex(originPostcode)][getPostcodeIndex(destPostcode)];
       */
 
     public /*@ pure @*/ long getDistance(int originPostcode, int destPostcode) {
@@ -267,7 +275,13 @@ public class RouteNetwork {
 
     /*@ public normal_behavior
       @ accessible postcodeFootprint;
-      @ ensures \result == postcodeCount;
+      @ ensures \result == getPostcodeCount();
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.postcodeCount);
+      @ ensures \result == this.postcodeCount;
      */
     public /*@ pure @*/ int getPostcodeCount() {
         return postcodeCount;

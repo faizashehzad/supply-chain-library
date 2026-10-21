@@ -6,12 +6,21 @@ import logistics.model.Warehouse;
 
 public class ShipmentProcessor {
 
+    //@ public invariant getStrategy() != null;
+    /*@ private invariant strategy != null; @*/
     private RouteStrategy strategy;
 
     /*@ public normal_behavior
-      @ requires strategy != null;
-      @ assignable \nothing;
-      @ ensures this.strategy == strategy;
+     @ requires strategy != null;
+     @ assignable \nothing;
+     @ ensures this.getStrategy() == strategy;
+     @
+     @ also
+     @
+     @ private normal_behavior
+     @ requires strategy != null;
+     @ assignable \nothing;
+     @ ensures this.strategy == strategy;
      */
     public ShipmentProcessor(RouteStrategy strategy) {
         this.strategy = strategy;
@@ -26,7 +35,7 @@ public class ShipmentProcessor {
      */
 
     //TODO:Specify notify Observer part is still open have to think about observer pattern specification slides 5.2
-    
+
     /*@ public  normal_behavior
       @ requires s == null || w == null;
       @ assignable \strictly_nothing;
@@ -92,4 +101,20 @@ public class ShipmentProcessor {
         s.markDelivered();
         w.notifyObservers(s);
     }
+
+    /*@ public normal_behavior
+      @ accessible this.*;
+      @ ensures \result != null;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.strategy);
+      @ ensures \result == this.strategy;
+      @*/
+    public /*@ pure @*/ RouteStrategy getStrategy() {
+        return strategy;
+    }
+
+
 }

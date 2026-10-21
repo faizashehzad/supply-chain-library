@@ -57,15 +57,27 @@ public class AlertService implements ShipmentObserver {
     /*@ public normal_behavior //TODO: private specification
       @ accessible footprint;
       @ ensures \result == alertCount;
+      @ ensures \result >= 0;
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.alertCount);
+      @ ensures \result == this.alertCount;
      */
     public /*@ pure @*/ int getAlertCount() {
         return alertCount;
     }
     /*@ public normal_behavior
       @ accessible footprint;
-      @ ensures \result == lastAlertedShipment;
+      @ ensures \result != null;
+      @
+      @ also
+      @
+      @ private normal_behavior
+      @ accessible \singleton(this.lastAlertedShipment);
+      @ ensures \result == this.lastAlertedShipment;
       */
-    public /*@ pure @*/ Shipment getLastAlertedShipment() {
+    public /*@ nullable pure @*/ Shipment getLastAlertedShipment() {
         return lastAlertedShipment;
     }
 }
