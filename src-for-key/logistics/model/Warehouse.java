@@ -48,6 +48,7 @@ public class Warehouse {
     // ==========================================
 
     //all reference types are null by defaultttttttt no need of invariants
+    //@ private invariant \invariant_for(inventory);
     private List inventory;
 
     private List observers;
@@ -164,7 +165,7 @@ public class Warehouse {
       @ also
       @
       @ private normal_behavior
-      @ accessible \singleton(this.inventory), inventory.footprint;
+      @ accessible this.inventory, inventory.footprint;
       @ ensures (0 <= index && index < this.inventory.size()) ==> (\result != null && \result == this.inventory.get(index));
       @ ensures (index < 0 || index >= this.inventory.size()) ==> (\result == null);
      */
@@ -185,7 +186,7 @@ public class Warehouse {
       @ also
       @
       @ private normal_behavior
-      @ accessible \infinite_union(int i; 0 <= i < this.inventory.content.length; \singleton(inventory.content[i].id)), \singleton(this.inventory), inventory.footprint;
+      @ accessible \infinite_union(int i; 0 <= i < this.inventory.content.length; ((Shipment)inventory.content[i]).*), this.inventory, inventory.footprint;
       @ ensures (\exists int i; 0 <= i && i < inventory.content.length; ((Shipment)inventory.get(i)).getShipmentId() == shipmentId) ==>
       @         (\exists int i; 0 <= i && i < inventory.content.length; ((Shipment)inventory.get(i)).getShipmentId() == shipmentId && \result != null && \result == (Shipment) inventory.get(i));
       @ ensures (\forall int i; 0 <= i && i < inventory.content.length; ((Shipment)inventory.get(i)).getShipmentId() != shipmentId) ==>

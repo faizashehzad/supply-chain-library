@@ -28,7 +28,7 @@ public class Location {
       @ also
       @
       @ private normal_behavior
-      @ accessible \singleton(this.postcode), \singleton(obj.postcode);
+      @ accessible this.postcode, obj.postcode;
       @ ensures \result == (obj instanceof Location && ((Location)obj).postcode == this.postcode);
       @*/
 
@@ -46,7 +46,7 @@ public class Location {
       @ also
       @
       @ private normal_behavior
-      @ accessible \singleton(this.postcode);
+      @ accessible this.postcode;
       @ ensures \result == this.postcode;
       */
     public /*@ strictly_pure @*/ int hashCode() {
@@ -60,7 +60,7 @@ public class Location {
       @ also
       @
       @ private normal_behavior
-      @ accessible \singleton(this.name);
+      @ accessible this.name;
       @ ensures \result == this.name;
       @*/
     public /*@ strictly_pure @*/ String getName() {
@@ -75,7 +75,7 @@ public class Location {
       @ also
       @
       @ private normal_behavior
-      @ accessible \singleton(this.postcode);
+      @ accessible this.postcode;
       @ ensures \result == this.postcode;
      */
     public /*@ strictly_pure @*/ int getPostcode() { // Getter updated to return int
